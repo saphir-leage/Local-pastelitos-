@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Meine Kuchen — Wunschkuchen anfragen</title>
   <meta name="description" content="Hausgemachte Wunschkuchen – individuell dekoriert. Anfrageformular.">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Meine Kuchen — Wunschkuchen anfragen">
+  <meta property="og:description" content="Hausgemachte Wunschkuchen – individuell dekoriert. Anfrageformular.">
+  <meta property="og:image" content="/mein-kuchen-social.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Favicon (add actual file at /favicon.ico for best results) -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+
   <style>
     :root{
       --pink:#f7d8e5;
@@ -50,14 +61,18 @@
     .confirmation{margin-top:12px;padding:12px;border-radius:10px;background:#eaf7ef;color:#1b5e20;display:none}
     .error{background:#ffe8e8;color:#7a1a1a;display:none;padding:12px;border-radius:10px;margin-top:12px}
     .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+    /* Simple modal (confirmation popup) */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:none;align-items:center;justify-content:center;z-index:10000}
+    .modal{background:#fff;padding:20px;border-radius:12px;max-width:460px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.2);}
+    .modal h3{margin-top:0}
+
     @media(max-width:760px){
       .hero{grid-template-columns:1fr;padding-top:36px}
       .cards{grid-template-columns:1fr}
     }
     /* focus-visible */
-    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible{
-      outline:none;box-shadow:var(--focus)
-    }
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible{outline:none;box-shadow:var(--focus)}
   </style>
 </head>
 <body>
@@ -120,30 +135,30 @@
         <p class="note">Fülle die Anfrage aus. Die endgültige Bestellung, Bezahlung und Übergabe werden mit deinen Eltern abgesprochen.</p>
 
         <!--
-          WICHTIG: Ersetze das action-Attribut durch deinen Formspree-Endpoint
-          Beispiel Formspree: https://formspree.io/f/DEIN_FORM_ID
+          Formspree endpoint set by user.
         -->
-        <form id="orderForm" action="https://formspree.io/f/DEIN_FORM_ID" method="POST" novalidate>
+        <form id="orderForm" action="https://formspree.io/f/xljeevyg" method="POST" novalidate>
           <label for="name">Name</label>
           <input id="name" name="name" required placeholder="Vorname">
 
-          <label for="parentEmail">E‑Mail der Eltern (für Kontakt)</label>
+          <label for="parentEmail">E
+ktion Email der Eltern (fr Kontakt)</label>
           <input id="parentEmail" name="parentEmail" type="email" required placeholder="eltern@example.de" aria-describedby="emailNote">
-          <div id="emailNote" class="small">Die E‑Mail wird nur für diese Anfrage verwendet. Bitte vorher mit den Eltern abstimmen.</div>
+          <div id="emailNote" class="small">Die Email wird nur fr diese Anfrage verwendet. Bitte vorher mit den Eltern abstimmen.</div>
 
           <label for="date">Wunschtermin</label>
           <input id="date" name="date" type="date" required>
 
-          <label for="size">Kuchengröße</label>
+          <label for="size">KuchengrGre</label>
           <select id="size" name="size" required>
-            <option value="">Bitte wählen</option>
+            <option value="">Bitte wlhlen</option>
             <option value="klein">Klein</option>
             <option value="mittel">Mittel</option>
-            <option value="gross">Groß</option>
+            <option value="gross">Gro</option>
           </select>
 
           <label for="flavor">Geschmack</label>
-          <input id="flavor" name="flavor" placeholder="z. B. Schokolade" required>
+          <input id="flavor" name="flavor" placeholder="z. B. Schokolade">
 
           <label for="design">Wunschdesign</label>
           <textarea id="design" name="design" placeholder="Farben, Schrift, Anlass, Deko ..."></textarea>
@@ -154,9 +169,15 @@
             <input id="website" name="website" type="text" autocomplete="off">
           </div>
 
+          <!-- Consent for using parent's email -->
+          <div style="margin-top:12px">
+            <label><input type="checkbox" id="consent" name="consent" required> Ich habe die Eltern informiert und erlaube, ihre Email fr die Kontaktaufnahme zu verwenden.</label>
+          </div>
+
           <button type="submit">Anfrage absenden</button>
 
-          <p class="small">Hinweis: In dieser Vorlage wird keine Online‑Zahlung durchgeführt. Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
+          <p class="small">Hinweis: In dieser Vorlage wird keine Onlinezahlung durchgefrt. Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
+          <p class="small">Datenschutz: <a href="/privacy.html">Kurzinfo zum Datenschutz</a></p>
 
           <div id="confirmation" class="confirmation" role="status" aria-live="polite"></div>
           <div id="error" class="error" role="alert"></div>
@@ -169,14 +190,21 @@
   <footer>
     <p><strong>🎂 Meine Kuchen</strong></p>
     <p>Hausgemacht & liebevoll dekoriert</p>
-    <p class="small">Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
+    <p class="small">Bestellungen bitte gemeinsam mit den Eltern abwickeln. (<a href="/privacy.html">Datenschutz</a>)</p>
   </footer>
 
-  <script>
-    // === Konfiguration
-    // Ersetze FORM_ENDPOINT mit deinem echten Endpoint, falls du das form action nicht editierst.
-    const FORM_ENDPOINT = document.getElementById('orderForm').action || 'https://formspree.io/f/DEIN_FORM_ID';
+  <!-- Confirmation modal -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Anfrage bereit</h3>
+      <p id="modalMessage">Deine Anfrage wurde gesendet. Danke! Wir melden uns bald.</p>
+      <p style="text-align:right;margin:0">
+        <button id="modalClose" style="background:var(--rose);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer">Schließen</button>
+      </p>
+    </div>
+  </div>
 
+  <script>
     // Set min date to today
     (function setMinDate() {
       const dateInput = document.getElementById('date');
@@ -185,15 +213,28 @@
       dateInput.setAttribute('min', today);
     })();
 
-    // Helper: escape for displaying in confirmation
-    function escapeHtml(str) {
-      return String(str || '').replace(/[&<>"]'/g, function(s){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]; });
-    }
-
     const form = document.getElementById('orderForm');
     const confEl = document.getElementById('confirmation');
     const errEl = document.getElementById('error');
     const submitBtn = form.querySelector('button[type="submit"]');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalClose = document.getElementById('modalClose');
+
+    function showModal(message) {
+      document.getElementById('modalMessage').textContent = message;
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+      modalClose.focus();
+    }
+    function hideModal() {
+      modalBackdrop.style.display = 'none';
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+    }
+    modalClose.addEventListener('click', () => {
+      hideModal();
+      // After closing modal, go to thank-you page
+      window.location.href = '/thankyou.html';
+    });
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -214,15 +255,22 @@
         return;
       }
 
-      // Gather data
+      // Ensure consent checkbox is checked
+      const consent = form.elements['consent'];
+      if (consent && !consent.checked) {
+        errEl.style.display = 'block';
+        errEl.textContent = 'Bitte bestmaze, dass die Eltern informiert sind.';
+        return;
+      }
+
+      // Gather data as FormData
       const data = new FormData(form);
-      // Formspree accepts form-encoded POST. We'll send FormData directly.
-      // Show a preview to user and ask for confirmation (UX), or directly send:
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sende...';
 
       try {
-        const response = await fetch(FORM_ENDPOINT, {
+        const response = await fetch(form.action, {
           method: form.method || 'POST',
           body: data,
           headers: {
@@ -231,20 +279,12 @@
         });
 
         if (response.ok) {
-          // Success
-          confEl.style.display = 'block';
-          confEl.innerHTML = '<strong>Danke — deine Anfrage wurde gesendet.</strong><br>Wir melden uns so bald wie möglich bei der angegebenen E‑Mail-Adresse.';
+          // Success: show modal confirmation and then redirect when closed
+          showModal('Danke — deine Anfrage wurde gesendet. Wir melden uns so bald wie möglich.');
           form.reset();
-          // reset min date (some browsers reset date to empty)
-          (function setMinDateAgain() {
-            const dateInput = document.getElementById('date');
-            if (!dateInput) return;
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.setAttribute('min', today);
-          })();
+          (function setMinDateAgain() { const dateInput = document.getElementById('date'); if (!dateInput) return; const today = new Date().toISOString().split('T')[0]; dateInput.setAttribute('min', today); })();
         } else {
-          // Try to read error message
-          let errText = 'Fehler beim Senden. Bitte später erneut versuchen.';
+          let errText = 'Fehler beim Senden. Bitte splter erneut versuchen.';
           try {
             const payload = await response.json();
             if (payload && payload.error) errText = payload.error;
