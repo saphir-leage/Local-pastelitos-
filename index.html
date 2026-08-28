@@ -1,276 +1,265 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meine Kuchen 🎂</title>
-  <meta name="description" content="Hausgemachte Wunschkuchen – liebevoll dekoriert.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Meine Kuchen — Wunschkuchen anfragen</title>
+  <meta name="description" content="Hausgemachte Wunschkuchen – individuell dekoriert.">
   <style>
     :root{
       --pink:#f7d8e5;
       --rose:#b94d72;
       --cream:#fffaf6;
       --dark:#3d3034;
-      --light:#ffffff;
+      --focus: 3px solid rgba(185,77,114,0.18);
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
       margin:0;
-      font-family:Arial, Helvetica, sans-serif;
+      font-family:Arial,Helvetica,sans-serif;
       color:var(--dark);
       background:var(--cream);
       line-height:1.6;
     }
-    header{
-      background:linear-gradient(135deg,#f7d8e5,#fff0f5);
-      padding:22px 6%;
-      position:sticky;
-      top:0;
-      z-index:10;
-      box-shadow:0 2px 12px rgba(0,0,0,.08);
-    }
-    nav{
-      max-width:1100px;
-      margin:auto;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:20px;
-    }
-    .logo{font-size:1.35rem;font-weight:800;color:var(--rose)}
-    nav a{
-      color:var(--dark);
-      text-decoration:none;
-      margin-left:18px;
-      font-weight:700;
-    }
-    .hero{
-      max-width:1100px;
-      margin:auto;
-      padding:70px 6% 55px;
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:45px;
-      align-items:center;
-    }
-    .hero h1{font-size:clamp(2.4rem,6vw,4.5rem);line-height:1.05;margin:0 0 20px}
-    .hero p{font-size:1.12rem}
-    .button{
-      display:inline-block;
-      background:var(--rose);
-      color:white;
-      padding:13px 20px;
-      border-radius:999px;
-      text-decoration:none;
-      font-weight:800;
-      margin-top:12px;
-    }
-    .hero img{
-      width:100%;
-      max-height:600px;
-      object-fit:cover;
-      border-radius:28px;
-      box-shadow:0 14px 35px rgba(80,30,45,.18);
-    }
-    section{padding:65px 6%}
+    header{background:linear-gradient(135deg,#f7d8e5,#fff0f5);padding:18px 6%;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+    nav{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .logo{font-size:1.25rem;font-weight:800;color:var(--rose)}
+    nav a{color:var(--dark);text-decoration:none;margin-left:14px;font-weight:700}
+    .skip-link{position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{position:static;width:auto;height:auto;left:0;padding:8px 12px;background:#fff;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:1000}
+    .hero{max-width:1100px;margin:auto;padding:64px 6% 40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+    .hero h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1.05;margin:0 0 16px}
+    .button{display:inline-block;background:var(--rose);color:white;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:800;margin-top:12px;border:0}
+    .hero img{width:100%;height:auto;border-radius:18px;box-shadow:0 12px 30px rgba(80,30,45,.14);display:block}
+    section{padding:56px 6%}
     .wrap{max-width:1100px;margin:auto}
-    h2{text-align:center;font-size:2.2rem;margin-top:0}
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:20px;
-    }
-    .card{
-      background:white;
-      padding:25px;
-      border-radius:22px;
-      box-shadow:0 5px 20px rgba(0,0,0,.07);
-    }
-    .price{font-size:1.7rem;font-weight:900;color:var(--rose)}
-    .note{text-align:center;max-width:750px;margin:0 auto 28px}
-    .order{
-      background:var(--pink);
-    }
-    form{
-      max-width:700px;
-      margin:auto;
-      background:white;
-      padding:28px;
-      border-radius:24px;
-      box-shadow:0 5px 20px rgba(0,0,0,.07);
-    }
-    label{display:block;font-weight:700;margin-top:14px}
-    input, select, textarea{
-      width:100%;
-      padding:13px;
-      margin-top:6px;
-      border:1px solid #ddd;
-      border-radius:12px;
-      font:inherit;
-    }
-    textarea{min-height:120px;resize:vertical}
-    button{
-      border:0;
-      cursor:pointer;
-      font:inherit;
-      width:100%;
-    }
+    h2{text-align:center;font-size:2rem;margin-top:0}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:white;padding:20px;border-radius:16px;box-shadow:0 5px 18px rgba(0,0,0,.06)}
+    .price{font-size:1.4rem;font-weight:900;color:var(--rose)}
+    .note{text-align:center;max-width:720px;margin:0 auto 22px}
+    .order{background:var(--pink)}
+    form{max-width:720px;margin:auto;background:white;padding:22px;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}
+    label{display:block;font-weight:700;margin-top:12px}
+    input, select, textarea, button { font:inherit; }
+    input, select, textarea{width:100%;padding:11px;margin-top:6px;border:1px solid #ddd;border-radius:10px;background:#fff}
+    textarea{min-height:110px;resize:vertical}
+    button[type="submit"]{border:0;cursor:pointer;width:100%;padding:12px;background:var(--rose);color:#fff;border-radius:10px;font-weight:800;margin-top:14px}
     .small{font-size:.9rem;color:#6d6266}
-    footer{
-      text-align:center;
-      padding:30px 6%;
-      background:#3d3034;
-      color:white;
-    }
+    .confirmation{margin-top:12px;padding:12px;border-radius:10px;background:#eaf7ef;color:#1b5e20;display:none}
+    .error{background:#ffe8e8;color:#7a1a1a;display:none;padding:12px;border-radius:10px;margin-top:12px}
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
     @media(max-width:760px){
-      nav{flex-direction:column}
-      nav a{margin:0 8px}
-      .hero{grid-template-columns:1fr;padding-top:45px}
+      .hero{grid-template-columns:1fr;padding-top:36px}
       .cards{grid-template-columns:1fr}
+    }
+    /* focus-visible */
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible{
+      outline:none;box-shadow:var(--focus)
     }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
 
-<header>
-  <nav>
-    <div class="logo">🎂 Meine Kuchen</div>
-    <div>
-      <a href="#angebot">Angebot</a>
-      <a href="#preise">Preise</a>
-      <a href="#bestellen">Anfragen</a>
-    </div>
-  </nav>
-</header>
+  <header>
+    <nav aria-label="Hauptnavigation">
+      <div class="logo">🎂 Meine Kuchen</div>
+      <div>
+        <a href="#angebot">Angebot</a>
+        <a href="#preise">Preise</a>
+        <a href="#bestellen">Anfragen</a>
+      </div>
+    </nav>
+  </header>
 
-<main>
-  <section class="hero">
-    <div>
-      <p>✨ Mit Liebe gemacht</p>
-      <h1>Dein Wunschkuchen.</h1>
-      <p>
-        Schöne, individuell dekorierte Kuchen für Geburtstage,
-        Feiern und besondere Tage.
-      </p>
-      <a class="button" href="#bestellen">Kuchen anfragen</a>
-    </div>
-    <div>
-      <img src="mein-kuchen.jpg" alt="Beispiel für einen selbstgemachten dekorierten Kuchen">
-    </div>
-  </section>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <p>✨ Mit Liebe gemacht</p>
+        <h1 id="hero-title">Dein Wunschkuchen.</h1>
+        <p>Schöne, individuell dekorierte Kuchen für Geburtstage, Feiern und besondere Tage.</p>
+        <a class="button" href="#bestellen">Kuchen anfragen</a>
+      </div>
+      <div>
+        <picture>
+          <source type="image/webp" srcset="mein-kuchen.webp">
+          <source type="image/jpeg" srcset="mein-kuchen.jpg">
+          <img src="mein-kuchen.jpg" alt="Runder Geburtstagskuchen mit Blumen-Dekor" width="1200" height="800" loading="lazy">
+        </picture>
+      </div>
+    </section>
 
-  <section id="angebot">
-    <div class="wrap">
-      <h2>Was ich anbiete</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>🎨 Wunschdesign</h3>
-          <p>Du kannst Farben, Schrift und Dekoration nach deinem Wunsch auswählen.</p>
-        </div>
-        <div class="card">
-          <h3>🍰 Verschiedene Sorten</h3>
-          <p>Zum Beispiel Schokolade, Vanille oder andere Sorten nach Absprache.</p>
-        </div>
-        <div class="card">
-          <h3>💗 Für besondere Anlässe</h3>
-          <p>Geburtstage, kleine Feiern oder einfach ein besonderer Tag.</p>
+    <section id="angebot">
+      <div class="wrap">
+        <h2>Was ich anbiete</h2>
+        <div class="cards" role="list">
+          <div class="card" role="listitem"><h3>🎨 Wunschdesign</h3><p>Farben, Schrift und Dekoration nach Wunsch.</p></div>
+          <div class="card" role="listitem"><h3>🍰 Verschiedene Sorten</h3><p>Schokolade, Vanille oder andere Sorten nach Absprache.</p></div>
+          <div class="card" role="listitem"><h3>💗 Für besondere Anlässe</h3><p>Geburtstage, kleine Feiern oder besondere Tage.</p></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="preise">
-    <div class="wrap">
-      <h2>Preise</h2>
-      <p class="note">
-        Ein Kuchen wie auf dem Beispielbild liegt ungefähr bei <strong>45 €</strong>.
-        Der genaue Preis hängt von Größe, Geschmack und Dekoration ab.
-      </p>
-      <div class="cards">
-        <div class="card">
-          <h3>Classic</h3>
-          <p>Einfachere Dekoration</p>
-          <div class="price">ab 30 €</div>
-        </div>
-        <div class="card">
-          <h3>Wunschkuchen</h3>
-          <p>Aufwendigere Farben, Schrift und Dekoration</p>
-          <div class="price">ab 45 €</div>
-        </div>
-        <div class="card">
-          <h3>Special</h3>
-          <p>Besonders aufwendiges Wunschdesign</p>
-          <div class="price">auf Anfrage</div>
+    <section id="preise">
+      <div class="wrap">
+        <h2>Preise</h2>
+        <p class="note">Ein Kuchen wie auf dem Beispielbild liegt ungefähr bei <strong>45 €</strong>. Der genaue Preis hängt von Größe, Geschmack und Dekoration ab.</p>
+        <div class="cards">
+          <div class="card"><h3>Classic</h3><p>Einfachere Dekoration</p><div class="price">ab 30 €</div></div>
+          <div class="card"><h3>Wunschkuchen</h3><p>Aufwendigere Farben, Schrift und Dekoration</p><div class="price">ab 45 €</div></div>
+          <div class="card"><h3>Special</h3><p>Besonders aufwendiges Wunschdesign</p><div class="price">auf Anfrage</div></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="bestellen" class="order">
-    <div class="wrap">
-      <h2>🎂 Kuchen anfragen</h2>
-      <p class="note">
-        Fülle die Anfrage aus. Die endgültige Bestellung, Bezahlung und
-        Übergabe werden mit deinen Eltern abgesprochen.
-      </p>
+    <section id="bestellen" class="order" aria-labelledby="order-title">
+      <div class="wrap">
+        <h2 id="order-title">🎂 Kuchen anfragen</h2>
+        <p class="note">Fülle die Anfrage aus. Die endgültige Bestellung, Bezahlung und Übergabe werden mit deinen Eltern abgesprochen.</p>
 
-      <form id="orderForm">
-        <label for="name">Name</label>
-        <input id="name" name="name" required placeholder="Vorname">
+        <!--
+          WICHTIG: Ersetze das action-Attribut durch deinen Formspree-Endpoint
+          oder deine Serverless-API-URL. Beispiel Formspree: https://formspree.io/f/DEIN_FORM_ID
+        -->
+        <form id="orderForm" action="https://formspree.io/f/DEIN_FORM_ID" method="POST" novalidate>
+          <label for="name">Name</label>
+          <input id="name" name="name" required placeholder="Vorname">
 
-        <label for="date">Wunschtermin</label>
-        <input id="date" name="date" type="date" required>
+          <label for="parentEmail">E‑Mail der Eltern (für Kontakt)</label>
+          <input id="parentEmail" name="parentEmail" type="email" required placeholder="eltern@example.de" aria-describedby="emailNote">
+          <div id="emailNote" class="small">Die E‑Mail wird nur für diese Anfrage verwendet. Bitte vorher mit den Eltern abstimmen.</div>
 
-        <label for="size">Kuchengröße</label>
-        <select id="size" name="size">
-          <option>Klein</option>
-          <option>Mittel</option>
-          <option>Groß</option>
-        </select>
+          <label for="date">Wunschtermin</label>
+          <input id="date" name="date" type="date" required>
 
-        <label for="flavor">Geschmack</label>
-        <input id="flavor" name="flavor" placeholder="z. B. Schokolade">
+          <label for="size">Kuchengröße</label>
+          <select id="size" name="size" required>
+            <option value="">Bitte wählen</option>
+            <option value="klein">Klein</option>
+            <option value="mittel">Mittel</option>
+            <option value="gross">Groß</option>
+          </select>
 
-        <label for="design">Wunschdesign</label>
-        <textarea id="design" name="design" placeholder="Farben, Schrift, Anlass, Deko ..."></textarea>
+          <label for="flavor">Geschmack</label>
+          <input id="flavor" name="flavor" placeholder="z. B. Schokolade" required>
 
-        <button class="button" type="submit">Anfrage vorbereiten</button>
-        <p class="small">
-          Hinweis: In dieser Vorlage wird keine Online-Zahlung durchgeführt.
-          Trage unten im Code die E-Mail-Adresse deiner Eltern ein.
-        </p>
-      </form>
-    </div>
-  </section>
-</main>
+          <label for="design">Wunschdesign</label>
+          <textarea id="design" name="design" placeholder="Farben, Schrift, Anlass, Deko ..."></textarea>
 
-<footer>
-  <p><strong>🎂 Meine Kuchen</strong></p>
-  <p>Hausgemacht & liebevoll dekoriert</p>
-  <p class="small">Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
-</footer>
+          <!-- Honeypot (verstecktes Feld zur Spam-Abwehr) -->
+          <div class="visually-hidden" aria-hidden="true">
+            <label for="website">Wenn du ein Mensch bist, lasse dieses Feld leer</label>
+            <input id="website" name="website" type="text" autocomplete="off">
+          </div>
 
-<script>
-  document.getElementById("orderForm").addEventListener("submit", function(e){
-    e.preventDefault();
+          <button type="submit">Anfrage absenden</button>
 
-    const parentEmail = "DEINE-ELTERN-EMAIL@example.com";
+          <p class="small">Hinweis: In dieser Vorlage wird keine Online‑Zahlung durchgeführt. Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
 
-    const data = new FormData(this);
-    const body =
-      "Kuchen-Anfrage%0A%0A" +
-      "Name: " + encodeURIComponent(data.get("name")) + "%0A" +
-      "Wunschtermin: " + encodeURIComponent(data.get("date")) + "%0A" +
-      "Größe: " + encodeURIComponent(data.get("size")) + "%0A" +
-      "Geschmack: " + encodeURIComponent(data.get("flavor")) + "%0A" +
-      "Wunschdesign: " + encodeURIComponent(data.get("design"));
+          <div id="confirmation" class="confirmation" role="status" aria-live="polite"></div>
+          <div id="error" class="error" role="alert"></div>
+        </form>
 
-    window.location.href =
-      "mailto:" + parentEmail +
-      "?subject=Kuchen-Anfrage&body=" + body;
-  });
-</script>
+      </div>
+    </section>
+  </main>
 
+  <footer>
+    <p><strong>🎂 Meine Kuchen</strong></p>
+    <p>Hausgemacht & liebevoll dekoriert</p>
+    <p class="small">Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
+  </footer>
+
+  <script>
+    // === Konfiguration
+    // Ersetze FORM_ENDPOINT mit deinem echten Endpoint, falls du das form action nicht editierst.
+    const FORM_ENDPOINT = document.getElementById('orderForm').action || 'https://formspree.io/f/DEIN_FORM_ID';
+
+    // Set min date to today
+    (function setMinDate() {
+      const dateInput = document.getElementById('date');
+      if (!dateInput) return;
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.setAttribute('min', today);
+    })();
+
+    // Helper: escape for displaying in confirmation
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"]'/g, function(s){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]; });
+    }
+
+    const form = document.getElementById('orderForm');
+    const confEl = document.getElementById('confirmation');
+    const errEl = document.getElementById('error');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      confEl.style.display = 'none';
+      errEl.style.display = 'none';
+      confEl.textContent = '';
+      errEl.textContent = '';
+
+      // Basic HTML5 validation
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Honeypot check
+      if (form.elements['website'] && form.elements['website'].value) {
+        // likely a bot - silently drop
+        return;
+      }
+
+      // Gather data
+      const data = new FormData(form);
+      // Formspree accepts form-encoded POST. We'll send FormData directly.
+      // Show a preview to user and ask for confirmation (UX), or directly send:
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sende...';
+
+      try {
+        const response = await fetch(FORM_ENDPOINT, {
+          method: form.method || 'POST',
+          body: data,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          // Success
+          confEl.style.display = 'block';
+          confEl.innerHTML = '<strong>Danke — deine Anfrage wurde gesendet.</strong><br>Wir melden uns so bald wie möglich bei der angegebenen E‑Mail-Adresse.';
+          form.reset();
+          // reset min date (some browsers reset date to empty)
+          (function setMinDateAgain() {
+            const dateInput = document.getElementById('date');
+            if (!dateInput) return;
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+          })();
+        } else {
+          // Try to read error message
+          let errText = 'Fehler beim Senden. Bitte später erneut versuchen.';
+          try {
+            const payload = await response.json();
+            if (payload && payload.error) errText = payload.error;
+            else if (payload && payload.message) errText = payload.message;
+          } catch (e) { /* ignore parse error */ }
+          throw new Error(errText);
+        }
+      } catch (err) {
+        errEl.style.display = 'block';
+        errEl.textContent = err.message || 'Es ist ein Fehler aufgetreten.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Anfrage absenden';
+      }
+    });
+  </script>
 </body>
 </html>
