@@ -141,20 +141,19 @@
           <label for="name">Name</label>
           <input id="name" name="name" required placeholder="Vorname">
 
-          <label for="parentEmail">E
-ktion Email der Eltern (fr Kontakt)</label>
-          <input id="parentEmail" name="parentEmail" type="email" required placeholder="eltern@example.de" aria-describedby="emailNote">
-          <div id="emailNote" class="small">Die Email wird nur fr diese Anfrage verwendet. Bitte vorher mit den Eltern abstimmen.</div>
+          <label for="email">Deine E‑Mail (für Rückfragen)</label>
+          <input id="email" name="email" type="email" required placeholder="beispiel@domain.de" aria-describedby="emailNote">
+          <div id="emailNote" class="small">Bitte gib deine eigene E‑Mail‑Adresse an, damit wir dir Rückfragen schicken können.</div>
 
           <label for="date">Wunschtermin</label>
           <input id="date" name="date" type="date" required>
 
-          <label for="size">KuchengrGre</label>
+          <label for="size">Kuchengröße</label>
           <select id="size" name="size" required>
-            <option value="">Bitte wlhlen</option>
+            <option value="">Bitte wählen</option>
             <option value="klein">Klein</option>
             <option value="mittel">Mittel</option>
-            <option value="gross">Gro</option>
+            <option value="gross">Groß</option>
           </select>
 
           <label for="flavor">Geschmack</label>
@@ -169,14 +168,14 @@ ktion Email der Eltern (fr Kontakt)</label>
             <input id="website" name="website" type="text" autocomplete="off">
           </div>
 
-          <!-- Consent for using parent's email -->
+          <!-- Consent for using provided email -->
           <div style="margin-top:12px">
-            <label><input type="checkbox" id="consent" name="consent" required> Ich habe die Eltern informiert und erlaube, ihre Email fr die Kontaktaufnahme zu verwenden.</label>
+            <label><input type="checkbox" id="consent" name="consent" required> Ich bestätige, dass die angegebene E‑Mail‑Adresse korrekt ist und ich (bei Minderjährigen: mit den Eltern) die Anfrage abgesprochen habe.</label>
           </div>
 
           <button type="submit">Anfrage absenden</button>
 
-          <p class="small">Hinweis: In dieser Vorlage wird keine Onlinezahlung durchgefrt. Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
+          <p class="small">Hinweis: In dieser Vorlage wird keine Online‑Zahlung durchgeführt. Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
           <p class="small">Datenschutz: <a href="/privacy.html">Kurzinfo zum Datenschutz</a></p>
 
           <div id="confirmation" class="confirmation" role="status" aria-live="polite"></div>
@@ -259,7 +258,7 @@ ktion Email der Eltern (fr Kontakt)</label>
       const consent = form.elements['consent'];
       if (consent && !consent.checked) {
         errEl.style.display = 'block';
-        errEl.textContent = 'Bitte bestmaze, dass die Eltern informiert sind.';
+        errEl.textContent = 'Bitte bestätige, dass die E‑Mail-Adresse korrekt ist und du die Eltern informiert hast (falls nötig).';
         return;
       }
 
@@ -284,7 +283,7 @@ ktion Email der Eltern (fr Kontakt)</label>
           form.reset();
           (function setMinDateAgain() { const dateInput = document.getElementById('date'); if (!dateInput) return; const today = new Date().toISOString().split('T')[0]; dateInput.setAttribute('min', today); })();
         } else {
-          let errText = 'Fehler beim Senden. Bitte splter erneut versuchen.';
+          let errText = 'Fehler beim Senden. Bitte später erneut versuchen.';
           try {
             const payload = await response.json();
             if (payload && payload.error) errText = payload.error;
