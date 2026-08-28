@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meine Kuchen 🎂</title>
+  <meta name="description" content="Hausgemachte Wunschkuchen – liebevoll dekoriert.">
+  <style>
+    :root{
+      --pink:#f7d8e5;
+      --rose:#b94d72;
+      --cream:#fffaf6;
+      --dark:#3d3034;
+      --light:#ffffff;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--dark);
+      background:var(--cream);
+      line-height:1.6;
+    }
+    header{
+      background:linear-gradient(135deg,#f7d8e5,#fff0f5);
+      padding:22px 6%;
+      position:sticky;
+      top:0;
+      z-index:10;
+      box-shadow:0 2px 12px rgba(0,0,0,.08);
+    }
+    nav{
+      max-width:1100px;
+      margin:auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+    }
+    .logo{font-size:1.35rem;font-weight:800;color:var(--rose)}
+    nav a{
+      color:var(--dark);
+      text-decoration:none;
+      margin-left:18px;
+      font-weight:700;
+    }
+    .hero{
+      max-width:1100px;
+      margin:auto;
+      padding:70px 6% 55px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:45px;
+      align-items:center;
+    }
+    .hero h1{font-size:clamp(2.4rem,6vw,4.5rem);line-height:1.05;margin:0 0 20px}
+    .hero p{font-size:1.12rem}
+    .button{
+      display:inline-block;
+      background:var(--rose);
+      color:white;
+      padding:13px 20px;
+      border-radius:999px;
+      text-decoration:none;
+      font-weight:800;
+      margin-top:12px;
+    }
+    .hero img{
+      width:100%;
+      max-height:600px;
+      object-fit:cover;
+      border-radius:28px;
+      box-shadow:0 14px 35px rgba(80,30,45,.18);
+    }
+    section{padding:65px 6%}
+    .wrap{max-width:1100px;margin:auto}
+    h2{text-align:center;font-size:2.2rem;margin-top:0}
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+    .card{
+      background:white;
+      padding:25px;
+      border-radius:22px;
+      box-shadow:0 5px 20px rgba(0,0,0,.07);
+    }
+    .price{font-size:1.7rem;font-weight:900;color:var(--rose)}
+    .note{text-align:center;max-width:750px;margin:0 auto 28px}
+    .order{
+      background:var(--pink);
+    }
+    form{
+      max-width:700px;
+      margin:auto;
+      background:white;
+      padding:28px;
+      border-radius:24px;
+      box-shadow:0 5px 20px rgba(0,0,0,.07);
+    }
+    label{display:block;font-weight:700;margin-top:14px}
+    input, select, textarea{
+      width:100%;
+      padding:13px;
+      margin-top:6px;
+      border:1px solid #ddd;
+      border-radius:12px;
+      font:inherit;
+    }
+    textarea{min-height:120px;resize:vertical}
+    button{
+      border:0;
+      cursor:pointer;
+      font:inherit;
+      width:100%;
+    }
+    .small{font-size:.9rem;color:#6d6266}
+    footer{
+      text-align:center;
+      padding:30px 6%;
+      background:#3d3034;
+      color:white;
+    }
+    @media(max-width:760px){
+      nav{flex-direction:column}
+      nav a{margin:0 8px}
+      .hero{grid-template-columns:1fr;padding-top:45px}
+      .cards{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">🎂 Meine Kuchen</div>
+    <div>
+      <a href="#angebot">Angebot</a>
+      <a href="#preise">Preise</a>
+      <a href="#bestellen">Anfragen</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p>✨ Mit Liebe gemacht</p>
+      <h1>Dein Wunschkuchen.</h1>
+      <p>
+        Schöne, individuell dekorierte Kuchen für Geburtstage,
+        Feiern und besondere Tage.
+      </p>
+      <a class="button" href="#bestellen">Kuchen anfragen</a>
+    </div>
+    <div>
+      <img src="mein-kuchen.jpg" alt="Beispiel für einen selbstgemachten dekorierten Kuchen">
+    </div>
+  </section>
+
+  <section id="angebot">
+    <div class="wrap">
+      <h2>Was ich anbiete</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>🎨 Wunschdesign</h3>
+          <p>Du kannst Farben, Schrift und Dekoration nach deinem Wunsch auswählen.</p>
+        </div>
+        <div class="card">
+          <h3>🍰 Verschiedene Sorten</h3>
+          <p>Zum Beispiel Schokolade, Vanille oder andere Sorten nach Absprache.</p>
+        </div>
+        <div class="card">
+          <h3>💗 Für besondere Anlässe</h3>
+          <p>Geburtstage, kleine Feiern oder einfach ein besonderer Tag.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="preise">
+    <div class="wrap">
+      <h2>Preise</h2>
+      <p class="note">
+        Ein Kuchen wie auf dem Beispielbild liegt ungefähr bei <strong>45 €</strong>.
+        Der genaue Preis hängt von Größe, Geschmack und Dekoration ab.
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3>Classic</h3>
+          <p>Einfachere Dekoration</p>
+          <div class="price">ab 30 €</div>
+        </div>
+        <div class="card">
+          <h3>Wunschkuchen</h3>
+          <p>Aufwendigere Farben, Schrift und Dekoration</p>
+          <div class="price">ab 45 €</div>
+        </div>
+        <div class="card">
+          <h3>Special</h3>
+          <p>Besonders aufwendiges Wunschdesign</p>
+          <div class="price">auf Anfrage</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bestellen" class="order">
+    <div class="wrap">
+      <h2>🎂 Kuchen anfragen</h2>
+      <p class="note">
+        Fülle die Anfrage aus. Die endgültige Bestellung, Bezahlung und
+        Übergabe werden mit deinen Eltern abgesprochen.
+      </p>
+
+      <form id="orderForm">
+        <label for="name">Name</label>
+        <input id="name" name="name" required placeholder="Vorname">
+
+        <label for="date">Wunschtermin</label>
+        <input id="date" name="date" type="date" required>
+
+        <label for="size">Kuchengröße</label>
+        <select id="size" name="size">
+          <option>Klein</option>
+          <option>Mittel</option>
+          <option>Groß</option>
+        </select>
+
+        <label for="flavor">Geschmack</label>
+        <input id="flavor" name="flavor" placeholder="z. B. Schokolade">
+
+        <label for="design">Wunschdesign</label>
+        <textarea id="design" name="design" placeholder="Farben, Schrift, Anlass, Deko ..."></textarea>
+
+        <button class="button" type="submit">Anfrage vorbereiten</button>
+        <p class="small">
+          Hinweis: In dieser Vorlage wird keine Online-Zahlung durchgeführt.
+          Trage unten im Code die E-Mail-Adresse deiner Eltern ein.
+        </p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><strong>🎂 Meine Kuchen</strong></p>
+  <p>Hausgemacht & liebevoll dekoriert</p>
+  <p class="small">Bestellungen bitte gemeinsam mit den Eltern abwickeln.</p>
+</footer>
+
+<script>
+  document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const parentEmail = "DEINE-ELTERN-EMAIL@example.com";
+
+    const data = new FormData(this);
+    const body =
+      "Kuchen-Anfrage%0A%0A" +
+      "Name: " + encodeURIComponent(data.get("name")) + "%0A" +
+      "Wunschtermin: " + encodeURIComponent(data.get("date")) + "%0A" +
+      "Größe: " + encodeURIComponent(data.get("size")) + "%0A" +
+      "Geschmack: " + encodeURIComponent(data.get("flavor")) + "%0A" +
+      "Wunschdesign: " + encodeURIComponent(data.get("design"));
+
+    window.location.href =
+      "mailto:" + parentEmail +
+      "?subject=Kuchen-Anfrage&body=" + body;
+  });
+</script>
+
+</body>
+</html>
