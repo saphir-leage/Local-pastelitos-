@@ -12,7 +12,14 @@
     .cake-view-modes button{border:0;background:transparent;color:var(--pt-muted);border-radius:999px;padding:10px 12px;font:800 .67rem/1 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.18s}
     .cake-view-modes button:hover{color:var(--pt-accent)}
     .cake-view-modes button.is-active{background:var(--pt-ink);color:#fff;box-shadow:0 6px 16px rgba(42,33,29,.14)}
-    @media(max-width:720px){.cake-view-modes{border-radius:16px}.cake-view-modes button{padding:10px 7px;font-size:.61rem}}
+    .cake-fullscreen-close{display:none;position:absolute;top:18px;right:18px;z-index:230;border:1px solid rgba(42,33,29,.15);background:rgba(255,253,249,.9);color:#2a211d;width:44px;height:44px;border-radius:50%;font-size:1.55rem;line-height:1;box-shadow:0 10px 30px rgba(42,33,29,.12);backdrop-filter:blur(12px)}
+    .visual-stage.is-cake-fullscreen{position:fixed!important;inset:0!important;z-index:220!important;width:100vw!important;height:100dvh!important;background:#e8ded5!important;padding:0!important;margin:0!important}
+    .visual-stage.is-cake-fullscreen .cake-viewer{width:100vw!important;height:100dvh!important;min-height:100dvh!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+    .visual-stage.is-cake-fullscreen #cakeCanvas{width:100vw!important;height:100dvh!important;min-height:100dvh!important;cursor:grab}
+    .visual-stage.is-cake-fullscreen .viewer-topline,.visual-stage.is-cake-fullscreen .viewer-hint,.visual-stage.is-cake-fullscreen .cake-view-modes,.visual-stage.is-cake-fullscreen .view-controls{display:none!important}
+    .visual-stage.is-cake-fullscreen .cake-fullscreen-close{display:grid;place-items:center}
+    body.cake-fullscreen-open{overflow:hidden!important}
+    @media(max-width:720px){.cake-view-modes{border-radius:16px}.cake-view-modes button{padding:10px 7px;font-size:.61rem}.cake-fullscreen-close{top:12px;right:12px;width:42px;height:42px}}
   `;
   document.head.appendChild(modeStyle);
 
@@ -379,10 +386,30 @@
     camera.aspect=w/h; camera.updateProjectionMatrix();
   }
 
-  let dragging=false,lastX=0,lastY=0;
-  canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});
-  canvas.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;root.rotation.y+=dx*.008;root.rotation.x=Math.max(-.25,Math.min(.14,root.rotation.x+dy*.003));lastX=e.clientX;lastY=e.clientY});
-  canvas.addEventListener('pointerup',()=>dragging=false); canvas.addEventListener('pointercancel',()=>dragging=false);
+  const visualStage=canvas.closest('.visual-stage');
+  let fullscreen=false;
+  function setCakeFullscreen(open){
+    if(!visualStage) return;
+    fullscreen=!!open;
+    visualStage.classList.toggle('is-cake-fullscreen',fullscreen);
+    document.body.classList.toggle('cake-fullscreen-open',fullscreen);
+    const close=visualStage.querySelector('.cake-fullscreen-close');
+    if(close) close.setAttribute('aria-hidden',fullscreen?'false':'true');
+    requestAnimationFrame(resize);
+  }
+  if(visualStage){
+    const close=document.createElement('button');
+    close.type='button'; close.className='cake-fullscreen-close'; close.setAttribute('aria-label','Vollbild schließen'); close.setAttribute('aria-hidden','true'); close.textContent='×';
+    close.addEventListener('click',e=>{e.stopPropagation();setCakeFullscreen(false)});
+    visualStage.appendChild(close);
+  }
+
+  let dragging=false,lastX=0,lastY=0,pointerStartX=0,pointerStartY=0,pointerMoved=false;
+  canvas.addEventListener('pointerdown',e=>{dragging=true;pointerMoved=false;pointerStartX=lastX=e.clientX;pointerStartY=lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;if(Math.hypot(e.clientX-pointerStartX,e.clientY-pointerStartY)>7)pointerMoved=true;root.rotation.y+=dx*.008;root.rotation.x=Math.max(-.25,Math.min(.14,root.rotation.x+dy*.003));lastX=e.clientX;lastY=e.clientY});
+  canvas.addEventListener('pointerup',()=>{const shouldToggle=!pointerMoved;dragging=false;if(shouldToggle)setCakeFullscreen(!fullscreen)});
+  canvas.addEventListener('pointercancel',()=>dragging=false);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&fullscreen)setCakeFullscreen(false)});
 
   function resetView(){root.rotation.set(-.05,-.38,0)}
   const left=document.getElementById('rotateLeft'),right=document.getElementById('rotateRight'),reset=document.getElementById('resetView');
@@ -390,7 +417,7 @@
   if(right)right.onclick=()=>root.rotation.y+=.35;
   if(reset)reset.onclick=resetView;
 
-  window.Cake3D={update:build,resetView,setViewMode,getViewMode:()=>viewMode};
+  window.Cake3D={update:build,resetView,setViewMode,getViewMode:()=>viewMode,setFullscreen:setCakeFullscreen};
   mountViewModes();
   loadAssets().then(ok=>{
     assetsReady=ok && !!window.PastelitosAssetsV1 && !!window.PastelitosAssetsV2;
