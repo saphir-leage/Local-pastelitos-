@@ -146,7 +146,7 @@
   requestAnimationFrame(mountFullscreenButton);
 
   const summaryFallback=document.createElement('script');
-  summaryFallback.src='final-summary-fallback.js?v=20260830-2328';
+  summaryFallback.src='final-summary-fallback.js?v=20260830-2350';
   summaryFallback.async=true;
   document.head.appendChild(summaryFallback);
 })();
