@@ -13,5 +13,6 @@
     setStep=function(n){activeStep=Math.max(0,Math.min(4,n));document.querySelectorAll('[data-pane]').forEach(e=>e.classList.toggle('is-active',+e.dataset.pane===activeStep));document.querySelectorAll('[data-step]').forEach(e=>{e.classList.toggle('is-active',+e.dataset.step===activeStep);e.classList.toggle('is-done',+e.dataset.step<activeStep)});prevStep.disabled=activeStep===0;nextStep.textContent=activeStep===4?'Torte anfragen':'Weiter';if(activeStep===4)render()};
     document.querySelectorAll('[data-step]').forEach(e=>e.onclick=()=>setStep(+e.dataset.step));prevStep.onclick=()=>setStep(activeStep-1);nextStep.onclick=()=>activeStep===4?openRequest():setStep(activeStep+1);finalRequestButton.onclick=openRequest;setStep(activeStep);
   }
+  const submitFix=document.createElement('script');submitFix.src='form-submit-fix.js?v=20260830-2342';submitFix.async=true;document.head.appendChild(submitFix);
   if(document.readyState==='complete')initFinalSummaryFallback();else window.addEventListener('load',initFinalSummaryFallback,{once:true});
 })();
