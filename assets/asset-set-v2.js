@@ -72,23 +72,12 @@
     const map=choc?textures.chocolateCake:textures.vanilla,bump=choc?textures.chocolateCakeBump:textures.vanillaBump;
     const mat=new THREE.MeshPhysicalMaterial({map,bumpMap:bump,bumpScale:.035,color:choc?0x70432d:0xe2b978,roughness:.91,metalness:0,sheen:.05,sheenRoughness:.9});
     const body=new THREE.Mesh(organicCylinder(1.65,.72,choc?911:910),mat); body.castShadow=body.receiveShadow=true; g.add(body);
-
     const rimMat=new THREE.MeshStandardMaterial({color:choc?0x3d2118:0xa56834,roughness:.98});
     const topRim=new THREE.Mesh(new THREE.TorusGeometry(1.57,.045,10,160),rimMat); topRim.rotation.x=Math.PI/2; topRim.position.y=.335; g.add(topRim);
     const bottomRim=topRim.clone(); bottomRim.position.y=-.335; g.add(bottomRim);
-
     const r=rnd(choc?913:912),poreMat=new THREE.MeshStandardMaterial({color:choc?0x24120d:0x79502c,roughness:1});
-    for(let i=0;i<280;i++){
-      const a=r()*Math.PI*2,y=-.3+r()*.6,rad=1.648+(r()-.5)*.025;
-      const sx=.014+r()*.032,sy=.012+r()*.025;
-      const pore=new THREE.Mesh(new THREE.SphereGeometry(1,8,6),poreMat);
-      pore.scale.set(sx,sy,sx*.35); pore.position.set(Math.cos(a)*rad,y,Math.sin(a)*rad); pore.rotation.y=-a; g.add(pore);
-    }
-    for(let i=0;i<75;i++){
-      const a=r()*Math.PI*2,d=.18+r()*1.32;
-      const crumb=new THREE.Mesh(new THREE.SphereGeometry(.01+r()*.026,7,5),mat);
-      crumb.scale.set(1.5,.65,1.1); crumb.position.set(Math.cos(a)*d,.37+(r()-.5)*.05,Math.sin(a)*d); g.add(crumb);
-    }
+    for(let i=0;i<280;i++){const a=r()*Math.PI*2,y=-.3+r()*.6,rad=1.648+(r()-.5)*.025;const sx=.014+r()*.032,sy=.012+r()*.025;const pore=new THREE.Mesh(new THREE.SphereGeometry(1,8,6),poreMat);pore.scale.set(sx,sy,sx*.35);pore.position.set(Math.cos(a)*rad,y,Math.sin(a)*rad);pore.rotation.y=-a;g.add(pore);}
+    for(let i=0;i<75;i++){const a=r()*Math.PI*2,d=.18+r()*1.32;const crumb=new THREE.Mesh(new THREE.SphereGeometry(.01+r()*.026,7,5),mat);crumb.scale.set(1.5,.65,1.1);crumb.position.set(Math.cos(a)*d,.37+(r()-.5)*.05,Math.sin(a)*d);g.add(crumb);}
     return g;
   }
 
@@ -98,12 +87,7 @@
     const shell=new THREE.Mesh(new THREE.CylinderGeometry(1.72,1.71,1,144,12,true),mat); shell.position.y=.5; shell.castShadow=shell.receiveShadow=true; g.add(shell);
     const top=new THREE.Mesh(new THREE.CylinderGeometry(1.725,1.72,.09,144,4,false),mat); top.position.y=1.015; top.castShadow=true; g.add(top);
     const r=rnd(1001);
-    for(let i=0;i<18;i++){
-      const a=i/18*Math.PI*2+(r()-.5)*.14;
-      const len=.08+r()*.24,w=.045+r()*.035;
-      const drip=new THREE.Mesh(new THREE.CapsuleGeometry(w,len,5,10),mat);
-      drip.position.set(Math.cos(a)*1.715,.95-len*.42,Math.sin(a)*1.715); drip.rotation.z=Math.PI/2; drip.rotation.y=-a; drip.scale.z=.6; g.add(drip);
-    }
+    for(let i=0;i<18;i++){const a=i/18*Math.PI*2+(r()-.5)*.14;const len=.08+r()*.24,w=.045+r()*.035;const drip=new THREE.Mesh(new THREE.CapsuleGeometry(w,len,5,10),mat);drip.position.set(Math.cos(a)*1.715,.95-len*.42,Math.sin(a)*1.715);drip.rotation.z=Math.PI/2;drip.rotation.y=-a;drip.scale.z=.6;g.add(drip);}
     return g;
   }
 
@@ -120,33 +104,13 @@
     const viewer=document.querySelector('.cake-viewer');
     if(!viewer || viewer.querySelector('.cake-fullscreen-open-button')) return;
     const style=document.createElement('style');
-    style.textContent=`
-      .cake-fullscreen-open-button{position:absolute;top:12px;left:12px;z-index:35;width:44px;height:44px;border:1px solid rgba(42,33,29,.14);border-radius:50%;background:rgba(255,253,249,.9);color:#2a211d;display:grid;place-items:center;box-shadow:0 8px 24px rgba(42,33,29,.11);backdrop-filter:blur(12px);font-size:1.18rem;line-height:1;cursor:pointer}
-      .cake-fullscreen-open-button:hover{background:#fff;color:#b8515f}
-      .cake-viewer .viewer-topline{top:64px}
-      .visual-stage.is-cake-fullscreen .cake-fullscreen-open-button{display:none!important}
-      @media(max-width:720px){.cake-fullscreen-open-button{top:10px;left:10px;width:42px;height:42px}.cake-viewer .viewer-topline{top:60px}}
-    `;
+    style.textContent=`.cake-fullscreen-open-button{position:absolute;top:12px;left:12px;z-index:35;width:44px;height:44px;border:1px solid rgba(42,33,29,.14);border-radius:50%;background:rgba(255,253,249,.9);color:#2a211d;display:grid;place-items:center;box-shadow:0 8px 24px rgba(42,33,29,.11);backdrop-filter:blur(12px);font-size:1.18rem;line-height:1;cursor:pointer}.cake-fullscreen-open-button:hover{background:#fff;color:#b8515f}.cake-viewer .viewer-topline{top:64px}.visual-stage.is-cake-fullscreen .cake-fullscreen-open-button{display:none!important}@media(max-width:720px){.cake-fullscreen-open-button{top:10px;left:10px;width:42px;height:42px}.cake-viewer .viewer-topline{top:60px}}`;
     document.head.appendChild(style);
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='cake-fullscreen-open-button';
-    button.setAttribute('aria-label','Torte im Vollbild anzeigen');
-    button.setAttribute('title','Vollbild');
-    button.innerHTML='&#x26F6;';
-    button.addEventListener('pointerdown',e=>e.stopPropagation());
-    button.addEventListener('click',e=>{
-      e.preventDefault();
-      e.stopPropagation();
-      window.Cake3D?.setFullscreen?.(true);
-    });
-    viewer.appendChild(button);
+    const button=document.createElement('button');button.type='button';button.className='cake-fullscreen-open-button';button.setAttribute('aria-label','Torte im Vollbild anzeigen');button.setAttribute('title','Vollbild');button.innerHTML='&#x26F6;';button.addEventListener('pointerdown',e=>e.stopPropagation());button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();window.Cake3D?.setFullscreen?.(true);});viewer.appendChild(button);
   }
 
   requestAnimationFrame(mountFullscreenButton);
 
-  const summaryFallback=document.createElement('script');
-  summaryFallback.src='final-summary-fallback.js?v=20260830-2350';
-  summaryFallback.async=true;
-  document.head.appendChild(summaryFallback);
+  const summaryFallback=document.createElement('script');summaryFallback.src='final-summary-fallback.js?v=20260830-2350';summaryFallback.async=true;document.head.appendChild(summaryFallback);
+  const promptPreview=document.createElement('script');promptPreview.src='prompt-preview.js?v=20260831-0010';promptPreview.async=true;document.head.appendChild(promptPreview);
 })();
