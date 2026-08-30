@@ -1,1 +1,0 @@
-Photorealistic 3D upgrade in progress
