@@ -50,6 +50,39 @@
     .card{background:white;padding:20px;border-radius:16px;box-shadow:0 5px 18px rgba(0,0,0,.06)}
     .price{font-size:1.4rem;font-weight:900;color:var(--rose)}
     .note{text-align:center;max-width:720px;margin:0 auto 22px}
+    .configurator{background:#fff3f7}
+    .config-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:24px;align-items:start}
+    .config-panel,.config-summary{background:#fff;padding:24px;border-radius:18px;box-shadow:0 5px 20px rgba(0,0,0,.06)}
+    .config-summary{position:sticky;top:94px}
+    .config-group{border:0;padding:0;margin:0 0 24px}
+    .config-group legend{font-weight:900;font-size:1.08rem;margin-bottom:10px}
+    .choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .choice{position:relative;margin:0;cursor:pointer}
+    .choice input{position:absolute;opacity:0;pointer-events:none}
+    .choice span{display:flex;min-height:76px;padding:12px;border:2px solid #eadde2;border-radius:12px;align-items:center;justify-content:center;text-align:center;font-weight:700;background:#fff;transition:.15s ease}
+    .choice input:checked + span{border-color:var(--rose);background:#fff1f6;color:#8e3152;box-shadow:0 0 0 3px rgba(185,77,114,.12)}
+    .choice input:focus-visible + span{outline:var(--focus)}
+    .extras{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .extra{display:flex;align-items:center;gap:10px;margin:0;padding:10px 12px;border:1px solid #eadde2;border-radius:10px;font-weight:700;cursor:pointer}
+    .extra input{width:auto;margin:0;accent-color:var(--rose)}
+    .summary-list{list-style:none;padding:0;margin:0 0 18px}
+    .summary-list li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #f0e5e9}
+    .total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:8px;font-weight:900}
+    .total output{font-size:1.8rem;color:var(--rose)}
+    .config-summary .button{width:100%;text-align:center;cursor:pointer}
+    .builder-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;padding:14px;background:#fff9fb;border:1px solid #f0dce4;border-radius:12px}
+    .builder-row label{margin:0}
+    .builder-row .row-title{grid-column:1/-1;font-weight:900;color:var(--rose)}
+    .builder-row select{margin-top:5px}
+    .layer-count{display:flex;align-items:center;gap:12px;margin:8px 0 22px}
+    .layer-count button,.view-controls button{border:1px solid #d9bdc7;background:#fff;color:var(--rose);border-radius:9px;padding:8px 13px;font-weight:900;cursor:pointer}
+    .layer-count output{min-width:2ch;text-align:center;font-size:1.2rem;font-weight:900}
+    .cake-viewer{position:relative;overflow:hidden;border-radius:16px;background:radial-gradient(circle at 50% 35%,#fff 0,#fff8fb 52%,#f1dce4 100%);border:1px solid #efdce3;margin-bottom:18px;touch-action:none}
+    #cakeCanvas{display:block;width:100%;height:360px;cursor:grab}
+    #cakeCanvas:active{cursor:grabbing}
+    .viewer-hint{position:absolute;left:0;right:0;bottom:8px;text-align:center;margin:0;color:#76656b;font-size:.82rem;pointer-events:none}
+    .view-controls{display:flex;justify-content:center;gap:8px;margin:-4px 0 18px}
+    .config-detail{margin:0 0 16px;padding-left:20px;font-size:.92rem}
     .order{background:var(--pink)}
     form{max-width:720px;margin:auto;background:white;padding:22px;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}
     label{display:block;font-weight:700;margin-top:12px}
@@ -70,6 +103,13 @@
     @media(max-width:760px){
       .hero{grid-template-columns:1fr;padding-top:36px}
       .cards{grid-template-columns:1fr}
+      .config-grid{grid-template-columns:1fr}
+      .config-summary{position:static}
+      .choice-grid{grid-template-columns:1fr}
+      .extras{grid-template-columns:1fr}
+      .builder-row{grid-template-columns:1fr}
+      .builder-row .row-title{grid-column:auto}
+      #cakeCanvas{height:310px}
     }
     /* focus-visible */
     input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible{outline:none;box-shadow:var(--focus)}
@@ -84,6 +124,7 @@
       <div>
         <a href="#angebot">Angebot</a>
         <a href="#preise">Preise</a>
+        <a href="#konfigurator">Konfigurator</a>
         <a href="#bestellen">Anfragen</a>
       </div>
     </nav>
@@ -129,6 +170,78 @@
       </div>
     </section>
 
+    <section id="konfigurator" class="configurator" aria-labelledby="config-title">
+      <div class="wrap">
+        <h2 id="config-title">Deinen 3D-Kuchen konfigurieren</h2>
+        <p class="note">Baue deinen Kuchen Schicht für Schicht. Die Vorschau und die unverbindliche Preisschätzung aktualisieren sich sofort.</p>
+        <div class="config-grid">
+          <div class="config-panel">
+            <fieldset class="config-group">
+              <legend>1. Größe wählen</legend>
+              <div class="choice-grid">
+                <label class="choice"><input type="radio" name="config-size" value="Klein (ca. 8 Personen)" data-price="30" checked><span>Klein<br>ca. 8 Personen</span></label>
+                <label class="choice"><input type="radio" name="config-size" value="Mittel (ca. 12 Personen)" data-price="42"><span>Mittel<br>ca. 12 Personen</span></label>
+                <label class="choice"><input type="radio" name="config-size" value="Groß (ca. 18 Personen)" data-price="58"><span>Groß<br>ca. 18 Personen</span></label>
+              </div>
+            </fieldset>
+
+            <div class="config-group">
+              <h3>2. Schichten</h3>
+              <p class="small">Wähle 1 bis 4 Kuchenschichten. Jede Schicht kann einen eigenen Teig haben.</p>
+              <div class="layer-count" aria-label="Anzahl der Kuchenschichten">
+                <button id="removeLayer" type="button" aria-label="Eine Schicht entfernen">−</button>
+                <output id="layerCount" aria-live="polite">2</output>
+                <button id="addLayer" type="button" aria-label="Eine Schicht hinzufügen">+</button>
+              </div>
+              <div id="layerControls"></div>
+            </div>
+
+            <div class="config-group">
+              <h3>3. Füllungen zwischen den Schichten</h3>
+              <p class="small">Für jeden Zwischenraum kannst du eine eigene Creme auswählen.</p>
+              <div id="fillingControls"></div>
+            </div>
+
+            <div class="config-group">
+              <h3>4. Topping &amp; Dekoration</h3>
+              <label for="glaze">Glasur</label>
+              <select id="glaze">
+                <option value="Keine" data-color="#f4dfc3" data-price="0">Keine Glasur</option>
+                <option value="Vanille" data-color="#fff2d6" data-price="5">Vanilleglasur (+ 5 €)</option>
+                <option value="Schokolade" data-color="#5b3026" data-price="6">Schokoladenglasur (+ 6 €)</option>
+                <option value="Erdbeere" data-color="#ee8fa8" data-price="6">Erdbeerglasur (+ 6 €)</option>
+                <option value="Pistazie" data-color="#a9c982" data-price="7">Pistazienglasur (+ 7 €)</option>
+              </select>
+              <div class="extras" style="margin-top:14px">
+                <label class="extra"><input type="checkbox" name="config-decoration" value="Frische Beeren" data-price="7"> 🍓 Frische Beeren (+ 7 €)</label>
+                <label class="extra"><input type="checkbox" name="config-decoration" value="Blumen" data-price="9"> 🌸 Blumen (+ 9 €)</label>
+                <label class="extra"><input type="checkbox" name="config-decoration" value="Streusel" data-price="4"> ✨ Streusel (+ 4 €)</label>
+                <label class="extra"><input type="checkbox" name="config-decoration" value="Kerzen" data-price="5"> 🕯️ Kerzen (+ 5 €)</label>
+              </div>
+            </div>
+          </div>
+
+          <aside class="config-summary" aria-labelledby="summary-title">
+            <h3 id="summary-title">Dein Kuchen in 3D</h3>
+            <div class="cake-viewer" id="cakeViewer">
+              <canvas id="cakeCanvas" role="img" aria-label="Drehbare 3D-Vorschau des konfigurierten Kuchens"></canvas>
+              <p class="viewer-hint">Mit Finger oder Maus drehen</p>
+            </div>
+            <div class="view-controls" aria-label="3D-Ansicht steuern">
+              <button id="rotateLeft" type="button" aria-label="Kuchen nach links drehen">↶</button>
+              <button id="resetView" type="button">Ansicht zurücksetzen</button>
+              <button id="rotateRight" type="button" aria-label="Kuchen nach rechts drehen">↷</button>
+            </div>
+            <p><strong id="summarySize"></strong></p>
+            <ul id="configDetail" class="config-detail"></ul>
+            <div class="total"><span>Geschätzter Preis</span><output id="configPrice" aria-live="polite">30 €</output></div>
+            <p class="small">Unverbindliche Schätzung. Der endgültige Preis wird nach Absprache bestätigt.</p>
+            <button class="button" id="useConfiguration" type="button">Auswahl anfragen</button>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <section id="bestellen" class="order" aria-labelledby="order-title">
       <div class="wrap">
         <h2 id="order-title">🎂 Kuchen anfragen</h2>
@@ -161,6 +274,9 @@
 
           <label for="design">Wunschdesign</label>
           <textarea id="design" name="design" placeholder="Farben, Schrift, Anlass, Deko ..."></textarea>
+
+          <input id="configuration" name="configuration" type="hidden">
+          <input id="estimatedPrice" name="estimated_price" type="hidden">
 
           <!-- Honeypot (verstecktes Feld zur Spam-Abwehr) -->
           <div class="visually-hidden" aria-hidden="true">
@@ -218,6 +334,265 @@
     const submitBtn = form.querySelector('button[type="submit"]');
     const modalBackdrop = document.getElementById('modalBackdrop');
     const modalClose = document.getElementById('modalClose');
+    const doughs = {
+      Vanille: { color: '#e8c989', price: 0 },
+      Schokolade: { color: '#75452f', price: 3 },
+      Zitrone: { color: '#efd66d', price: 3 },
+      'Red Velvet': { color: '#a93e46', price: 5 },
+      Marmor: { color: '#b88962', price: 4 }
+    };
+    const fillings = {
+      Buttercreme: { color: '#fff0cf', price: 0 },
+      Erdbeere: { color: '#e9788e', price: 4 },
+      Schokolade: { color: '#533026', price: 4 },
+      Zitrone: { color: '#f4df68', price: 4 },
+      Pistazie: { color: '#9fc37e', price: 5 }
+    };
+    const cakeState = {
+      layers: ['Vanille', 'Schokolade'],
+      fillings: ['Buttercreme'],
+      rotation: -.35,
+      dragging: false,
+      lastX: 0
+    };
+    const layerControls = document.getElementById('layerControls');
+    const fillingControls = document.getElementById('fillingControls');
+    const canvas = document.getElementById('cakeCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function optionsFor(items, selected) {
+      return Object.entries(items).map(([name, item]) =>
+        `<option value="${name}" ${name === selected ? 'selected' : ''}>${name}${item.price ? ` (+ ${item.price} €)` : ''}</option>`
+      ).join('');
+    }
+
+    function renderLayerControls() {
+      layerControls.innerHTML = cakeState.layers.map((flavor, index) => `
+        <div class="builder-row">
+          <div class="row-title">Schicht ${index + 1}</div>
+          <label>Teig / Geschmack
+            <select class="layer-flavor" data-index="${index}">${optionsFor(doughs, flavor)}</select>
+          </label>
+        </div>`).join('');
+      fillingControls.innerHTML = cakeState.fillings.map((flavor, index) => `
+        <div class="builder-row">
+          <div class="row-title">Füllung zwischen Schicht ${index + 1} und ${index + 2}</div>
+          <label>Geschmack
+            <select class="filling-flavor" data-index="${index}">${optionsFor(fillings, flavor)}</select>
+          </label>
+        </div>`).join('');
+      document.getElementById('layerCount').textContent = cakeState.layers.length;
+      document.getElementById('removeLayer').disabled = cakeState.layers.length <= 1;
+      document.getElementById('addLayer').disabled = cakeState.layers.length >= 4;
+
+      document.querySelectorAll('.layer-flavor').forEach(select => select.addEventListener('change', event => {
+        cakeState.layers[Number(event.target.dataset.index)] = event.target.value;
+        updateConfiguration();
+      }));
+      document.querySelectorAll('.filling-flavor').forEach(select => select.addEventListener('change', event => {
+        cakeState.fillings[Number(event.target.dataset.index)] = event.target.value;
+        updateConfiguration();
+      }));
+    }
+
+    function shade(hex, amount) {
+      const number = parseInt(hex.slice(1), 16);
+      const clamp = value => Math.max(0, Math.min(255, value));
+      const r = clamp((number >> 16) + amount);
+      const g = clamp(((number >> 8) & 255) + amount);
+      const b = clamp((number & 255) + amount);
+      return `rgb(${r},${g},${b})`;
+    }
+
+    function drawEllipse(x, y, rx, ry, color) {
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function drawCake() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(280, rect.width);
+      const height = Math.max(280, rect.height);
+      if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      const sizeName = document.querySelector('input[name="config-size"]:checked').value.split(' ')[0];
+      const scale = { Klein: .78, Mittel: .9, Groß: 1 }[sizeName];
+      const cakeWidth = Math.min(width * .72, 290) * scale;
+      const rx = cakeWidth / 2;
+      const ry = rx * (.25 + Math.abs(Math.sin(cakeState.rotation)) * .035);
+      const layerHeight = Math.min(48, (height - 105) / cakeState.layers.length);
+      const fillingHeight = 9;
+      const totalHeight = cakeState.layers.length * layerHeight + (cakeState.layers.length - 1) * fillingHeight;
+      const centerX = width / 2;
+      const bottomY = Math.min(height - 54, height / 2 + totalHeight / 2);
+      const sideLight = Math.round(Math.cos(cakeState.rotation) * 22);
+
+      ctx.save();
+      ctx.globalAlpha = .22;
+      drawEllipse(centerX + 8, bottomY + 15, rx * 1.12, ry * .9, '#6d3d4d');
+      ctx.restore();
+      drawEllipse(centerX, bottomY + 7, rx * 1.13, ry * 1.04, '#ead9d0');
+
+      let currentBottom = bottomY;
+      cakeState.layers.forEach((flavor, index) => {
+        const topY = currentBottom - layerHeight;
+        const baseColor = doughs[flavor].color;
+        const gradient = ctx.createLinearGradient(centerX - rx, 0, centerX + rx, 0);
+        gradient.addColorStop(0, shade(baseColor, -30 - sideLight));
+        gradient.addColorStop(.45, shade(baseColor, 18));
+        gradient.addColorStop(1, shade(baseColor, -22 + sideLight));
+        ctx.fillStyle = gradient;
+        ctx.fillRect(centerX - rx, topY, cakeWidth, layerHeight);
+        drawEllipse(centerX, currentBottom, rx, ry, shade(baseColor, -18));
+        drawEllipse(centerX, topY, rx, ry, shade(baseColor, 15));
+        currentBottom = topY;
+
+        if (index < cakeState.fillings.length) {
+          const fillColor = fillings[cakeState.fillings[index]].color;
+          const fillingTop = currentBottom - fillingHeight;
+          ctx.fillStyle = shade(fillColor, -12);
+          ctx.fillRect(centerX - rx, fillingTop, cakeWidth, fillingHeight);
+          drawEllipse(centerX, fillingTop, rx, ry, fillColor);
+          currentBottom = fillingTop;
+        }
+      });
+
+      const glaze = document.getElementById('glaze');
+      const glazeOption = glaze.options[glaze.selectedIndex];
+      const topColor = glaze.value === 'Keine' ? shade(doughs[cakeState.layers.at(-1)].color, 22) : glazeOption.dataset.color;
+      drawEllipse(centerX, currentBottom, rx, ry, topColor);
+      if (glaze.value !== 'Keine') {
+        const dripCount = 9;
+        ctx.fillStyle = shade(topColor, -9);
+        for (let i = 0; i < dripCount; i++) {
+          const angle = cakeState.rotation + (i / dripCount) * Math.PI * 2;
+          if (Math.sin(angle) < -.05) {
+            const x = centerX + Math.cos(angle) * rx * .88;
+            const length = 7 + (i % 3) * 5;
+            ctx.beginPath();
+            ctx.roundRect(x - 4, currentBottom - 1, 8, length, 4);
+            ctx.fill();
+          }
+        }
+      }
+
+      const decorations = [...document.querySelectorAll('input[name="config-decoration"]:checked')].map(input => input.value);
+      if (decorations.includes('Streusel')) {
+        const colors = ['#e15d7c', '#58a9a5', '#f2bd42', '#8f6abb'];
+        for (let i = 0; i < 28; i++) {
+          const angle = i * 2.4 + cakeState.rotation;
+          const radius = rx * (.18 + (i % 7) / 10);
+          ctx.fillStyle = colors[i % colors.length];
+          ctx.fillRect(centerX + Math.cos(angle) * radius - 2, currentBottom + Math.sin(angle) * ry * .62 - 2, 5, 3);
+        }
+      }
+      if (decorations.includes('Frische Beeren')) {
+        for (let i = 0; i < 7; i++) {
+          const angle = cakeState.rotation + i * .9;
+          drawEllipse(centerX + Math.cos(angle) * rx * .55, currentBottom + Math.sin(angle) * ry * .55 - 6, 7, 6, i % 2 ? '#9b1639' : '#d52e4d');
+        }
+      }
+      if (decorations.includes('Blumen')) {
+        for (let i = 0; i < 3; i++) {
+          const x = centerX + (i - 1) * 34 + Math.cos(cakeState.rotation) * 10;
+          const y = currentBottom - 8 + Math.sin(cakeState.rotation + i) * 5;
+          for (let p = 0; p < 6; p++) {
+            const a = p * Math.PI / 3;
+            drawEllipse(x + Math.cos(a) * 8, y + Math.sin(a) * 5, 5, 3, i % 2 ? '#f29ab3' : '#fff0f4');
+          }
+          drawEllipse(x, y, 4, 3, '#e7b23c');
+        }
+      }
+      if (decorations.includes('Kerzen')) {
+        for (let i = 0; i < 3; i++) {
+          const x = centerX + (i - 1) * 28;
+          ctx.fillStyle = ['#e66b86', '#75b7b4', '#e8b94f'][i];
+          ctx.fillRect(x - 3, currentBottom - 39, 6, 30);
+          drawEllipse(x, currentBottom - 44, 4, 7, '#f2a32b');
+        }
+      }
+    }
+
+    function updateConfiguration() {
+      const size = document.querySelector('input[name="config-size"]:checked');
+      const decorations = [...document.querySelectorAll('input[name="config-decoration"]:checked')];
+      const glaze = document.getElementById('glaze');
+      const glazeOption = glaze.options[glaze.selectedIndex];
+      const price = Number(size.dataset.price) + (cakeState.layers.length - 1) * 8
+        + cakeState.layers.reduce((sum, flavor) => sum + doughs[flavor].price, 0)
+        + cakeState.fillings.reduce((sum, flavor) => sum + fillings[flavor].price, 0)
+        + Number(glazeOption.dataset.price)
+        + decorations.reduce((sum, input) => sum + Number(input.dataset.price), 0);
+
+      document.getElementById('summarySize').textContent = `${size.value} · ${cakeState.layers.length} Schicht${cakeState.layers.length === 1 ? '' : 'en'}`;
+      const detail = [
+        ...cakeState.layers.map((flavor, index) => `Schicht ${index + 1}: ${flavor}`),
+        ...cakeState.fillings.map((flavor, index) => `Füllung ${index + 1}: ${flavor}`),
+        `Glasur: ${glaze.value}`,
+        `Dekoration: ${decorations.length ? decorations.map(item => item.value).join(', ') : 'keine'}`
+      ];
+      document.getElementById('configDetail').innerHTML = detail.map(item => `<li>${item}</li>`).join('');
+      document.getElementById('configPrice').textContent = `${price} €`;
+      drawCake();
+      return { size, decorations, glaze: glaze.value, price, detail };
+    }
+
+    document.getElementById('addLayer').addEventListener('click', () => {
+      if (cakeState.layers.length >= 4) return;
+      cakeState.layers.push('Vanille');
+      cakeState.fillings.push('Buttercreme');
+      renderLayerControls();
+      updateConfiguration();
+    });
+    document.getElementById('removeLayer').addEventListener('click', () => {
+      if (cakeState.layers.length <= 1) return;
+      cakeState.layers.pop();
+      cakeState.fillings.pop();
+      renderLayerControls();
+      updateConfiguration();
+    });
+    document.querySelectorAll('#konfigurator input, #glaze').forEach(input => input.addEventListener('change', updateConfiguration));
+    document.getElementById('rotateLeft').addEventListener('click', () => { cakeState.rotation -= .35; drawCake(); });
+    document.getElementById('rotateRight').addEventListener('click', () => { cakeState.rotation += .35; drawCake(); });
+    document.getElementById('resetView').addEventListener('click', () => { cakeState.rotation = -.35; drawCake(); });
+    canvas.addEventListener('pointerdown', event => {
+      cakeState.dragging = true;
+      cakeState.lastX = event.clientX;
+      canvas.setPointerCapture(event.pointerId);
+    });
+    canvas.addEventListener('pointermove', event => {
+      if (!cakeState.dragging) return;
+      cakeState.rotation += (event.clientX - cakeState.lastX) * .012;
+      cakeState.lastX = event.clientX;
+      drawCake();
+    });
+    canvas.addEventListener('pointerup', () => { cakeState.dragging = false; });
+    canvas.addEventListener('pointercancel', () => { cakeState.dragging = false; });
+    window.addEventListener('resize', drawCake);
+
+    renderLayerControls();
+    updateConfiguration();
+
+    document.getElementById('useConfiguration').addEventListener('click', () => {
+      const config = updateConfiguration();
+      const sizeMap = { Klein: 'klein', Mittel: 'mittel', Groß: 'gross' };
+      const sizeName = config.size.value.split(' ')[0];
+      document.getElementById('size').value = sizeMap[sizeName] || '';
+      document.getElementById('flavor').value = cakeState.layers.join(', ');
+      document.getElementById('design').value = `Füllungen: ${cakeState.fillings.join(', ') || 'keine'}; Glasur: ${config.glaze}; Dekoration: ${config.decorations.map(item => item.value).join(', ') || 'keine'}`;
+      document.getElementById('configuration').value = `Größe: ${config.size.value}; ${config.detail.join('; ')}`;
+      document.getElementById('estimatedPrice').value = `${config.price} € (unverbindlich)`;
+      document.getElementById('bestellen').scrollIntoView({ behavior: 'smooth' });
+      window.setTimeout(() => document.getElementById('name').focus(), 500);
+    });
 
     function showModal(message) {
       document.getElementById('modalMessage').textContent = message;
