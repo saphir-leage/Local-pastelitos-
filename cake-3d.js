@@ -69,11 +69,18 @@
   root.add(cakeGroup);
   let pendingConfig = null;
   let assetsReady = false;
+  let strawberryTexture = null;
 
   const sizeScale = { Klein: .9, Mittel: 1, Groß: 1.12 };
   const doughTint = { Vanille:0xffffff, Schokolade:0xffffff, Zitrone:0xf1cf67, 'Red Velvet':0x9d3f48, Marmor:0xbc8f70 };
   const fillingTint = { Buttercreme:0xffffff, Erdbeere:0xef9ca9, Schokolade:0x704330, Zitrone:0xf1dc87, Pistazie:0xb3c793 };
   const glazeColor = { Keine:null, Vanille:0xf0dfc9, Schokolade:0x5b3427, Erdbeere:0xe58a9c, Pistazie:0xa8be86 };
+
+  new THREE.TextureLoader().load('assets/strawberry-photo-v1.webp', tex => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    strawberryTexture = tex;
+    if (pendingConfig && assetsReady) build(pendingConfig);
+  });
 
   function disposeObject(obj){
     obj.traverse(c=>{
@@ -131,6 +138,15 @@
   }
 
   function addStrawberry(x,y,z,scale=.34,rot=0){
+    if (strawberryTexture) {
+      const mat = new THREE.SpriteMaterial({map:strawberryTexture,transparent:true,alphaTest:.18,depthWrite:true,toneMapped:true});
+      const s = new THREE.Sprite(mat);
+      s.scale.set(1.22*scale/.34, .82*scale/.34, 1);
+      s.position.set(x,y,z);
+      s.material.rotation = -.08 + rot*.04;
+      cakeGroup.add(s);
+      return;
+    }
     const s = cloneTintedAsset('fruit.strawberry',0xffffff);
     s.scale.setScalar(scale); s.position.set(x,y,z); s.rotation.y=rot; cakeGroup.add(s);
   }
@@ -154,7 +170,8 @@
   }
 
   function build(config){
-    if(!assetsReady){pendingConfig=config;return;}
+    pendingConfig=config;
+    if(!assetsReady){return;}
     clearCake();
     const scale=sizeScale[config.size]||1;
     const radius=1.72*scale, spongeH=.62, fillH=.18, base=.22;
@@ -192,7 +209,7 @@
     assetsReady=ok && !!window.PastelitosAssetsV1;
     if(!assetsReady){console.error('Pastelitos V1 assets could not be loaded.');return;}
     const badge=document.querySelector('.viewer-badge');
-    if(badge) badge.textContent='MODULARES ASSET-SET · V1';
+    if(badge) badge.textContent='FOTO-ERDBEERE · PROTOTYP';
     if(pendingConfig) build(pendingConfig);
   });
 

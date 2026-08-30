@@ -1,5 +1,4 @@
 {
-  "version": 1,
   "qualityGate": {
     "goal": "photorealistic at close-up product photography distance",
     "workflow": "photoscan/photogrammetry -> cleanup -> retopology -> UV -> bake -> PBR/SSS -> GLB",
@@ -12,57 +11,53 @@
     "fruit.strawberry": {
       "label": "Erdbeere",
       "priority": 1,
-      "sourceStrategy": "CC0 photoscan master; preferred benchmark is the 2.7M triangle CC0 Fragaria x ananassa scan by ffish.asia/floraZia",
+      "status": "photo-prototype-integrated",
+      "prototypeRenderer": "camera-facing-photo-sprite",
+      "prototypeSource": "assets/strawberry-photo-v1.webp",
+      "productionTarget": "retopologized photogrammetry GLB with PBR/SSS",
+      "sourceStrategy": "CC0 photoscan master",
       "sourceUrl": "https://sketchfab.com/3d-models/cc0-strawberry-01557f2e35d74a668aa5dcefd1ad1874",
       "license": "CC0",
-      "webTargetTriangles": [30000, 50000],
-      "lod1Triangles": [10000, 18000],
-      "material": {
-        "roughnessRange": [0.28, 0.52],
-        "clearcoat": 0.08,
-        "subsurface": true,
-        "notes": "Preserve seed pits, seeds, calyx thickness, red/yellow hue variation and moist specular breakup; never globally oversaturate."
-      },
-      "acceptance": ["individual seeds readable in close-up", "wet-but-not-plastic highlights", "green calyx has visible veins", "no faceting at silhouette", "looks plausible under neutral HDRI"]
+      "webTargetTriangles": "30k-50k",
+      "lod1Triangles": "10k-18k",
+      "roughness": "0.28-0.52",
+      "clearcoat": 0.08,
+      "subsurface": true,
+      "notes": "Prototype uses a photo-real cutout so the configurator can demonstrate target surface quality now. Replace with a true multi-angle/3D photogrammetry asset for production rotation. Preserve seed pits, seeds, calyx thickness, red/yellow hue variation and moist specular breakup; never globally oversaturate.",
+      "acceptance": ["individual seeds readable close-up", "wet-but-not-plastic highlights", "green calyx visible veins", "no silhouette faceting", "plausible under neutral HDRI"]
     },
     "filling.vanilla": {
       "label": "Vanillecreme",
       "priority": 2,
       "sourceStrategy": "bespoke sculpt/scan-derived cream surface; displacement from real whipped/butter cream photography",
       "license": "original Pastelitos asset",
-      "webTargetTriangles": [18000, 32000],
-      "material": {
-        "roughnessRange": [0.38, 0.68],
-        "subsurface": true,
-        "notes": "Ivory rather than pure white; spatula ridges, tiny air pockets, compressed edge and slight translucency."
-      },
+      "targetTriangles": "18k-32k",
+      "roughness": "0.38-0.68",
+      "subsurface": true,
+      "notes": "ivory, not pure white; spatula ridges, tiny air pockets, compressed edge, slight translucency",
       "acceptance": ["visible spatula flow", "irregular thickness", "soft edge breakup", "no porcelain/plastic appearance"]
     },
     "dough.vanilla": {
       "label": "Vanille-Biskuit",
       "priority": 3,
-      "sourceStrategy": "bespoke macro-photogrammetry/material capture from a real baked sponge cross-section",
+      "sourceStrategy": "bespoke macro-photogrammetry/material capture from real baked sponge cross-section",
       "license": "original Pastelitos asset",
-      "webTargetTriangles": [22000, 40000],
-      "material": {
-        "roughnessRange": [0.68, 0.92],
-        "subsurface": true,
-        "notes": "Open crumb with non-repeating pores, golden baked rim, moist interior and torn micro-crumb silhouette."
-      },
-      "acceptance": ["pores vary in size and depth", "browned rim distinct from crumb", "edge is organically imperfect", "no repeating procedural pattern"]
+      "targetTriangles": "22k-40k",
+      "roughness": "0.68-0.92",
+      "subsurface": true,
+      "notes": "open crumb with non-repeating pores, golden baked rim, moist interior, torn micro-crumb silhouette",
+      "acceptance": ["varying pore size/depth", "browned rim distinct", "organically imperfect edge", "no repeating procedural pattern"]
     },
     "dough.chocolate": {
       "label": "Schoko-Biskuit",
       "priority": 4,
       "sourceStrategy": "bespoke macro-photogrammetry/material capture from real chocolate sponge cross-section",
       "license": "original Pastelitos asset",
-      "webTargetTriangles": [22000, 40000],
-      "material": {
-        "roughnessRange": [0.7, 0.94],
-        "subsurface": true,
-        "notes": "Deep cocoa brown with warm variation; irregular pores and crumbs; avoid flat near-black albedo."
-      },
-      "acceptance": ["cocoa color variation survives neutral lighting", "porous crumb readable", "baked outer edge visible", "no uniform cylinder look"]
+      "targetTriangles": "22k-40k",
+      "roughness": "0.70-0.94",
+      "subsurface": true,
+      "notes": "deep cocoa brown with warm variation, irregular pores/crumbs, avoid flat near-black albedo",
+      "acceptance": ["cocoa variation under neutral light", "porous crumb readable", "baked edge visible", "no uniform cylinder look"]
     }
   }
 }
