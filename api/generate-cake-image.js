@@ -21,22 +21,17 @@ export default async function handler(req, res) {
     const decorations = clean(c.decorations || c.decor, []);
     const extra = clean(c.description, '');
 
-    const prompt = `Create a premium, highly photorealistic editorial food photograph of the exact cake described below. Do not use a reference image. The cake configuration is the source of truth.
+    const prompt = `Photorealistic premium food photo of ONE cake slice only, standing slightly angled on an elegant ceramic plate. Do not show the remaining whole cake anywhere in the image.
 
-CAKE CONFIGURATION
-- Size: ${size}
-- Shape: ${shape}
-- Cake layers / sponge, bottom to top: ${layers.join(' | ') || 'not specified'}
-- Fillings / creams, bottom to top: ${fillings.join(' | ') || 'not specified'}
-- Exterior finish / glaze: ${finish || 'not specified'}
-- Decorations: ${decorations.join(' | ') || 'none'}
-- Additional configuration: ${extra || 'none'}
+EXACT CAKE CONFIGURATION
+Size: ${size}. Shape: ${shape}.
+Cake sponge layers from BOTTOM TO TOP: ${layers.join(' > ') || 'not specified'}.
+Fillings/creams from BOTTOM TO TOP, positioned between the sponge layers in that exact order: ${fillings.join(' > ') || 'not specified'}.
+Exterior finish: ${finish || 'not specified'}.
+Decorations: ${decorations.join(' | ') || 'none'}.
+Additional information: ${extra || 'none'}.
 
-SCENE
-Show the finished cake on a refined warm natural table in a premium modern patisserie setting. A neat wedge is cut out so the configured internal layers and fillings are clearly visible. Put the matching slice on a small elegant ceramic plate beside the cake. Warm natural window light, subtle linen, restrained flowers or greenery, a few realistic crumbs, shallow depth of field, professional high-end food photography. Warm cream, cocoa and berry mood. No people, no hands, no text, no logos, no candles unless explicitly configured.
-
-ACCURACY RULES
-Preserve the configured shape, relative size, number and order of cake layers, number and order of fillings, exterior finish and decorations. Do not invent additional cake layers, fillings, toppings or decorations. Make edible materials physically plausible and appetizing.`;
+The cut face of the single slice must clearly show the configured sponge layers and fillings in the exact bottom-to-top order above. Do not add, remove, duplicate or reorder layers or fillings. Keep the configured finish and decorations. Warm natural tabletop, refined modern patisserie atmosphere, subtle linen, restrained flowers/greenery, realistic crumbs, shallow depth of field, natural window light. No people, hands, text, logos or whole cake. The slice is the clear hero subject.`;
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
@@ -45,11 +40,12 @@ Preserve the configured shape, relative size, number and order of cake layers, n
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1',
+        model: process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1-mini',
         prompt,
-        size: ALLOWED_SIZES.has(req.body?.imageSize) ? req.body.imageSize : '1536x1024',
-        quality: 'high',
-        output_format: 'webp'
+        size: ALLOWED_SIZES.has(req.body?.imageSize) ? req.body.imageSize : '1024x1024',
+        quality: 'medium',
+        output_format: 'webp',
+        output_compression: 82
       })
     });
 
