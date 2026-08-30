@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pastelitos Asset Lab V1</title>
+<style>
+:root{--rose:#b94d72;--ink:#392f32;--bg:#f5eee8;--card:#fffaf6}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}main{max-width:1200px;margin:auto;padding:28px 18px 48px}h1{margin:0 0 8px;font-size:clamp(2rem,5vw,3.4rem)}p{line-height:1.55}.intro{max-width:800px;color:#6f6266}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:24px}.card{background:var(--card);border:1px solid #eadbd5;border-radius:18px;overflow:hidden;box-shadow:0 8px 26px rgba(77,48,55,.08)}.viewer{height:360px;position:relative;background:radial-gradient(circle at 50% 30%,#fff,#eee1d7 68%,#d8c9bf)}canvas{width:100%;height:100%;display:block;touch-action:none}.tag{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.86);padding:6px 9px;border-radius:999px;font-size:.75rem;font-weight:800;color:var(--rose);backdrop-filter:blur(6px)}.meta{padding:16px 18px 18px}.meta h2{margin:0 0 4px;font-size:1.15rem}.meta code{font-size:.82rem}.small{font-size:.9rem;color:#75686b}.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.controls button,.controls a{border:1px solid #d7bbc4;background:#fff;color:var(--rose);font-weight:800;border-radius:999px;padding:9px 13px;text-decoration:none;cursor:pointer}@media(max-width:760px){.grid{grid-template-columns:1fr}.viewer{height:300px}}
+</style>
+</head>
+<body><main>
+<h1>Asset Lab V1</h1>
+<p class="intro">Vier modular austauschbare Pastelitos-Grundbausteine. Dies ist bewusst ein Qualitäts-Prototyp: Asset-IDs, Maßstab, Materialcharakter und Austauschbarkeit stehen jetzt fest; Geometrie und Texturen können später einzeln durch Photoscan/GLB-Versionen ersetzt werden.</p>
+<div class="controls"><button id="reset">Ansichten zurücksetzen</button><a href="./#konfigurator">Zum Konfigurator</a></div>
+<section class="grid" id="grid"></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+<script src="assets/asset-set-v1.js"></script>
+<script>
+const defs=[
+ ['fruit.strawberry','Erdbeere','Glänzende Fruchthaut, Samen, Kelch und organische Silhouette'],
+ ['filling.vanilla','Vanillecreme','Elfenbeinfarbene Creme mit Spachtelrillen und unregelmäßiger Kante'],
+ ['dough.vanilla','Vanille-Biskuit','Goldene Krume mit Poren, Krümeln und gebräuntem Rand'],
+ ['dough.chocolate','Schoko-Biskuit','Warme Kakao-Krume mit Poren, Krümeln und dunkler Backkante']
+];
+const states=[]; const grid=document.getElementById('grid');
+function makeViewer(id,title,note){
+ const card=document.createElement('article');card.className='card';card.innerHTML=`<div class="viewer"><span class="tag">ASSET V1 · ${id}</span><canvas></canvas></div><div class="meta"><h2>${title}</h2><code>${id}</code><p class="small">${note}</p></div>`;grid.appendChild(card);
+ const canvas=card.querySelector('canvas'); const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+ const scene=new THREE.Scene(); const camera=new THREE.PerspectiveCamera(32,1,.1,50);camera.position.set(3.4,2.2,4.6);camera.lookAt(0,0,0);
+ scene.add(new THREE.HemisphereLight(0xfffbf7,0x675954,1.75)); const key=new THREE.DirectionalLight(0xfff2e7,4.1);key.position.set(3.5,5.5,4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key); const rim=new THREE.PointLight(0xe6ecff,8,13,2);rim.position.set(-3,2.7,-3);scene.add(rim);
+ const floor=new THREE.Mesh(new THREE.PlaneGeometry(12,12),new THREE.MeshStandardMaterial({color:0xe9ddd4,roughness:.95}));floor.rotation.x=-Math.PI/2;floor.position.y=-1.02;floor.receiveShadow=true;scene.add(floor);
+ const root=new THREE.Group(); const obj=PastelitosAssetsV1.create(id); if(id==='fruit.strawberry') obj.scale.setScalar(1.35); else obj.scale.setScalar(.78); root.add(obj); scene.add(root);
+ let rotY=-.35,rotX=-.06,drag=false,lastX=0,lastY=0; root.rotation.set(rotX,rotY,0);
+ const down=e=>{drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture?.(e.pointerId)}; const move=e=>{if(!drag)return;rotY+=(e.clientX-lastX)*.01;rotX=Math.max(-.5,Math.min(.45,rotX+(e.clientY-lastY)*.006));lastX=e.clientX;lastY=e.clientY;root.rotation.set(rotX,rotY,0)}; const up=()=>drag=false;canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+ function render(){const box=canvas.getBoundingClientRect();const w=Math.max(1,Math.floor(box.width)),h=Math.max(1,Math.floor(box.height));if(canvas.width!==Math.floor(w*renderer.getPixelRatio())||canvas.height!==Math.floor(h*renderer.getPixelRatio()))renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();renderer.render(scene,camera);requestAnimationFrame(render)}render();states.push(()=>{rotY=-.35;rotX=-.06;root.rotation.set(rotX,rotY,0)});
+}
+defs.forEach(d=>makeViewer(...d));document.getElementById('reset').onclick=()=>states.forEach(fn=>fn());
+</script></body></html>
