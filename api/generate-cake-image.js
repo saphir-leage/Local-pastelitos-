@@ -7,6 +7,44 @@ function clean(value, fallback = '') {
   return String(value ?? fallback).replace(/[<>]/g, '').trim().slice(0, 500);
 }
 
+function buildStack(layers, fillings) {
+  const stack = [];
+  layers.forEach((layer, index) => {
+    stack.push(`${stack.length + 1}. SPONGE: ${layer} — exactly 3 cm thick`);
+    if (index < layers.length - 1 && fillings[index]) {
+      stack.push(`${stack.length + 1}. CREAM/FILLING: ${fillings[index]} — exactly 1 cm thick`);
+    }
+  });
+  return stack.join('\n');
+}
+
+function buildPrompt({size, shape, layers, fillings, finish, decorations}) {
+  const stack = buildStack(layers, fillings);
+  return `Photorealistic premium food photograph of the configured cake, shown slightly angled in a refined modern patisserie setting. Show the COMPLETE CAKE with exactly ONE wedge-shaped slice cut out of it. Place that removed cake slice on an elegant ceramic dessert plate directly in front of the cake, also slightly angled toward the camera so its cut face and all layers are clearly visible.
+
+EXACT CAKE CONFIGURATION — THIS IS THE SOURCE OF TRUTH
+Size: ${size}. Shape: ${shape}.
+Number of sponge layers: ${layers.length}.
+Number of cream/filling layers: ${fillings.length}.
+Exterior finish: ${finish || 'none'} — exactly 3 mm thick wherever applied.
+Decorations: ${decorations.join(' | ') || 'none'}.
+
+MANDATORY VERTICAL STACK FROM BOTTOM TO TOP:
+${stack || 'not specified'}
+
+CRITICAL STRUCTURE RULES:
+- Reproduce the vertical stack above EXACTLY from bottom to top in BOTH the remaining cake and the slice on the plate.
+- Every sponge layer is exactly 3 cm thick.
+- Every cream/filling layer is exactly 1 cm thick and sits only between its two corresponding sponge layers.
+- The exterior finish is exactly 3 mm thick. It is a thin exterior coating, NOT an additional filling layer.
+- Do not add, remove, duplicate, merge, split, swap or reorder any sponge or cream layer.
+- The slice on the plate must visibly match the exposed cut face of the remaining cake one-to-one.
+- Preserve the configured finish and decorations; do not invent additional toppings or fillings.
+
+COMPOSITION AND STYLE:
+The whole cake remains clearly visible behind the plated slice. The missing wedge in the cake should visibly correspond to the slice on the plate. Show the cake and plated slice at a slight three-quarter angle, with the plated slice in the foreground. Warm natural tabletop, elegant ceramic plate, refined modern patisserie atmosphere, subtle linen, restrained flowers or greenery, realistic crumbs, shallow depth of field and natural window light. High-end realistic food photography. No people, hands, text, logos or candles unless candles are explicitly configured.`;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -18,11 +56,8 @@ export default async function handler(req, res) {
     const fillings = clean(c.fillings || c.creams || []);
     const finish = clean(c.finish || c.glaze, '');
     const decorations = clean(c.decorations || c.decor, []);
-    const extra = clean(c.description, '');
+    const prompt = buildPrompt({size, shape, layers, fillings, finish, decorations});
 
-    const prompt = `Photorealistic premium food photo of ONE cake slice only, standing slightly angled on an elegant ceramic plate. Do not show the remaining whole cake anywhere in the image.\n\nEXACT CAKE CONFIGURATION\nSize: ${size}. Shape: ${shape}.\nCake sponge layers from BOTTOM TO TOP: ${layers.join(' > ') || 'not specified'}.\nFillings/creams from BOTTOM TO TOP, positioned between the sponge layers in that exact order: ${fillings.join(' > ') || 'not specified'}.\nExterior finish: ${finish || 'not specified'}.\nDecorations: ${decorations.join(' | ') || 'none'}.\nAdditional information: ${extra || 'none'}.\n\nThe cut face of the single slice must clearly show the configured sponge layers and fillings in the exact bottom-to-top order above. Do not add, remove, duplicate or reorder layers or fillings. Keep the configured finish and decorations. Warm natural tabletop, refined modern patisserie atmosphere, subtle linen, restrained flowers/greenery, realistic crumbs, shallow depth of field, natural window light. No people, hands, text, logos or whole cake. The slice is the clear hero subject.`;
-
-    // Test mode: return the exact prompt without calling OpenAI and without generating costs.
     if (req.body?.previewOnly === true) {
       return res.status(200).json({ prompt, model: process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1-mini', quality: 'medium', imageSize: ALLOWED_SIZES.has(req.body?.imageSize) ? req.body.imageSize : '1024x1024' });
     }
@@ -53,7 +88,6 @@ export default async function handler(req, res) {
 
     const image = data?.data?.[0];
     if (!image) return res.status(502).json({ error: 'OpenAI hat kein Bild zurückgegeben.' });
-
     if (image.b64_json) return res.status(200).json({ image: `data:image/webp;base64,${image.b64_json}` });
     if (image.url) return res.status(200).json({ image: image.url });
     return res.status(502).json({ error: 'Unbekanntes Bildformat von OpenAI.' });
