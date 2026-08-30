@@ -9,7 +9,6 @@ function clean(value, fallback = '') {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!process.env.OPENAI_API_KEY) return res.status(500).json({ error: 'OPENAI_API_KEY fehlt auf dem Server.' });
 
   try {
     const c = req.body?.configuration || req.body || {};
@@ -21,17 +20,14 @@ export default async function handler(req, res) {
     const decorations = clean(c.decorations || c.decor, []);
     const extra = clean(c.description, '');
 
-    const prompt = `Photorealistic premium food photo of ONE cake slice only, standing slightly angled on an elegant ceramic plate. Do not show the remaining whole cake anywhere in the image.
+    const prompt = `Photorealistic premium food photo of ONE cake slice only, standing slightly angled on an elegant ceramic plate. Do not show the remaining whole cake anywhere in the image.\n\nEXACT CAKE CONFIGURATION\nSize: ${size}. Shape: ${shape}.\nCake sponge layers from BOTTOM TO TOP: ${layers.join(' > ') || 'not specified'}.\nFillings/creams from BOTTOM TO TOP, positioned between the sponge layers in that exact order: ${fillings.join(' > ') || 'not specified'}.\nExterior finish: ${finish || 'not specified'}.\nDecorations: ${decorations.join(' | ') || 'none'}.\nAdditional information: ${extra || 'none'}.\n\nThe cut face of the single slice must clearly show the configured sponge layers and fillings in the exact bottom-to-top order above. Do not add, remove, duplicate or reorder layers or fillings. Keep the configured finish and decorations. Warm natural tabletop, refined modern patisserie atmosphere, subtle linen, restrained flowers/greenery, realistic crumbs, shallow depth of field, natural window light. No people, hands, text, logos or whole cake. The slice is the clear hero subject.`;
 
-EXACT CAKE CONFIGURATION
-Size: ${size}. Shape: ${shape}.
-Cake sponge layers from BOTTOM TO TOP: ${layers.join(' > ') || 'not specified'}.
-Fillings/creams from BOTTOM TO TOP, positioned between the sponge layers in that exact order: ${fillings.join(' > ') || 'not specified'}.
-Exterior finish: ${finish || 'not specified'}.
-Decorations: ${decorations.join(' | ') || 'none'}.
-Additional information: ${extra || 'none'}.
+    // Test mode: return the exact prompt without calling OpenAI and without generating costs.
+    if (req.body?.previewOnly === true) {
+      return res.status(200).json({ prompt, model: process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1-mini', quality: 'medium', imageSize: ALLOWED_SIZES.has(req.body?.imageSize) ? req.body.imageSize : '1024x1024' });
+    }
 
-The cut face of the single slice must clearly show the configured sponge layers and fillings in the exact bottom-to-top order above. Do not add, remove, duplicate or reorder layers or fillings. Keep the configured finish and decorations. Warm natural tabletop, refined modern patisserie atmosphere, subtle linen, restrained flowers/greenery, realistic crumbs, shallow depth of field, natural window light. No people, hands, text, logos or whole cake. The slice is the clear hero subject.`;
+    if (!process.env.OPENAI_API_KEY) return res.status(500).json({ error: 'OPENAI_API_KEY fehlt auf dem Server.' });
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
