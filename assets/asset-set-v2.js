@@ -112,5 +112,5 @@
   requestAnimationFrame(mountFullscreenButton);
 
   const summaryFallback=document.createElement('script');summaryFallback.src='final-summary-fallback.js?v=20260830-2350';summaryFallback.async=true;document.head.appendChild(summaryFallback);
-  const promptPreview=document.createElement('script');promptPreview.src='prompt-preview.js?v=20260831-0010';promptPreview.async=true;document.head.appendChild(promptPreview);
+  const promptPreview=document.createElement('script');promptPreview.src='prompt-preview.js?v=20260831-0148';promptPreview.async=true;document.head.appendChild(promptPreview);
 })();
