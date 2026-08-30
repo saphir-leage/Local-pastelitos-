@@ -115,4 +115,33 @@
   }
 
   window.PastelitosAssetsV2={version:'2.0.0-prototype',create,ids:['dough.vanilla.v2','dough.chocolate.v2','finish.chocolate.v2']};
+
+  function mountFullscreenButton(){
+    const viewer=document.querySelector('.cake-viewer');
+    if(!viewer || viewer.querySelector('.cake-fullscreen-open-button')) return;
+    const style=document.createElement('style');
+    style.textContent=`
+      .cake-fullscreen-open-button{position:absolute;top:12px;left:12px;z-index:35;width:44px;height:44px;border:1px solid rgba(42,33,29,.14);border-radius:50%;background:rgba(255,253,249,.9);color:#2a211d;display:grid;place-items:center;box-shadow:0 8px 24px rgba(42,33,29,.11);backdrop-filter:blur(12px);font-size:1.18rem;line-height:1;cursor:pointer}
+      .cake-fullscreen-open-button:hover{background:#fff;color:#b8515f}
+      .cake-viewer .viewer-topline{top:64px}
+      .visual-stage.is-cake-fullscreen .cake-fullscreen-open-button{display:none!important}
+      @media(max-width:720px){.cake-fullscreen-open-button{top:10px;left:10px;width:42px;height:42px}.cake-viewer .viewer-topline{top:60px}}
+    `;
+    document.head.appendChild(style);
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='cake-fullscreen-open-button';
+    button.setAttribute('aria-label','Torte im Vollbild anzeigen');
+    button.setAttribute('title','Vollbild');
+    button.innerHTML='&#x26F6;';
+    button.addEventListener('pointerdown',e=>e.stopPropagation());
+    button.addEventListener('click',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      window.Cake3D?.setFullscreen?.(true);
+    });
+    viewer.appendChild(button);
+  }
+
+  requestAnimationFrame(mountFullscreenButton);
 })();
