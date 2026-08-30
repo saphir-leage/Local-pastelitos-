@@ -2,7 +2,10 @@
   'use strict';
   function initFinalSummaryFallback(){
     const nav=document.querySelector('.step-nav'),editor=document.querySelector('.editor-card'),actions=document.querySelector('.editor-actions');
-    if(!nav||!editor||!actions||document.querySelector('[data-pane="4"]')) return;
+    if(!nav||!editor||!actions) return;
+    const existingPane=document.querySelector('[data-pane="4"]');
+    if(existingPane) existingPane.remove();
+    document.querySelectorAll('[data-step="4"]').forEach(el=>el.remove());
     nav.classList.add('has-summary-step');
     const navButton=document.createElement('button');navButton.type='button';navButton.dataset.step='4';navButton.innerHTML='<b>05</b><span>Ergebnis</span><small>Zusammenfassung</small>';nav.appendChild(navButton);
     const pane=document.createElement('div');pane.className='step-pane';pane.dataset.pane='4';
