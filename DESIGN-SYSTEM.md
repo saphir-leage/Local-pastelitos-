@@ -1,51 +1,72 @@
 # Pastelitos – Design System
 
 ## Positionierung
-Pastelitos soll wie eine moderne, hochwertige Konditorei wirken: ruhig, handwerklich, präzise und produktorientiert. Die Seite vermeidet verspielte Elemente, Emojis, bunte Karten und generische Marketing-Sprache.
+Pastelitos soll wie eine junge, hochwertige Konditorei wirken: handwerklich, appetitlich, präzise und selbstbewusst. Nicht verspielt und nicht wie eine generische SaaS-Landingpage. Die Torte und ihre Konfiguration stehen immer im Mittelpunkt.
 
 ## Look & Feel
-- Editorial statt App-Look
-- Warme neutrale Flächen, viel Weißraum
-- Dunkles Espresso als primäre Text- und Aktionsfarbe
-- Gedämpftes Burgunder nur als Akzent
-- Feine Linien statt Schatten und Kartenstapel
-- Große Serifentypografie für Titel, klare Sans-Serif für Bedienung
-- Produkt/3D-Modell bleibt visueller Mittelpunkt
-- Keine dekorativen Icons, keine Farbverläufe, keine Pill-Buttons
+- Editoriale Patisserie statt App- oder Baukasten-Look
+- Helle, warme Flächen mit mehr Frische und Kontrast
+- Dunkles Cocoa/Espresso für Text und Navigation
+- Beeriges Rosé als kontrollierter Akzent
+- Weiche, hochwertige Flächen statt harter Kartenstapel
+- Moderate Rundungen (10–18 px), keine übertriebenen Bubble-Elemente
+- Große Serif-Headlines, ruhige Sans-Serif für Bedienung
+- Produkt-/3D-Vorschau ist der visuelle Anker
+- Presets dürfen als kuratierte Empfehlungen erscheinen, nicht als Promo-Kacheln
 
 ### Farben
-- Espresso `#201916`
-- Papier `#F4EFE8`
-- Porzellan `#FCF9F4`
-- Burgunder `#7B2F3A`
-- Taupe `#8A7E76`
-- Linie `rgba(32,25,22,.16)`
+- Ink `#2A211D`
+- Paper `#FBF7F1`
+- Surface `#FFFDF9`
+- Soft Cream `#F3E9DF`
+- Berry `#B8515F`
+- Berry Soft `#F2D9DC`
+- Cocoa `#51372E`
+- Muted `#7B6E66`
+- Linie `rgba(42,33,29,.12)`
 
 ## Typografie
-Headlines: Georgia, Times New Roman, Serif als robuste Web-Basis. UI und Fließtext: Inter/System/Arial-Stack. Headlines dürfen groß und ruhig sein; Interface-Texte bleiben klein, präzise und funktional.
+Headlines: Georgia, Times New Roman, Serif als robuste Web-Basis. UI und Fließtext: Inter/System-Stack. Headlines dürfen groß und emotional über Produktqualität wirken; Interface-Texte bleiben klein, knapp und funktional.
 
 ## Tone of Voice
 - konsequent `du`
-- kurze, klare Sätze
-- handwerklich und konkret
-- keine Superlative ohne Beleg
+- kurz, konkret und appetitlich
+- handwerklich statt werblich
+- Empfehlungen dürfen selbstbewusst formuliert sein
+- keine unbelegten Superlative
 - keine Emojis
 - keine künstlich emotionalen Claims
 
 Beispiele:
-- `Stell deinen Kuchen zusammen.`
-- `Wähle Teig, Creme, Finish und Dekoration.`
-- `Deine Konfiguration wird mit Zutaten und Zubereitung übermittelt.`
-- `Konfiguration senden`
+- `Deine Torte, ganz nach deinem Geschmack.`
+- `Drei gute Ausgangspunkte.`
+- `Vanille & Erdbeere`
+- `Wähle Größe, Böden, Creme, Finish und Dekoration.`
+- `Diese Konfiguration anfragen`
 
 Vermeiden:
 - `Magische Kuchenmomente`
 - `Einzigartige Geschmacksexplosionen`
 - `Mit ganz viel Liebe für dich`
-- unnötige Ausrufezeichen
+- Ausrufezeichen als Standard
 
-## Formulare und Konfigurator
-Der Konfigurator ist die Hauptanwendung und daher fast die gesamte Seite. Die 3D-Vorschau bleibt auf Desktop sticky. Auswahlfelder sind rechteckig, mit feinen Linien und deutlichem ausgewähltem Zustand. Zusammenfassung, Zutaten und Zubereitung erscheinen direkt unter der Konfiguration und werden beim Versand mitgesendet.
+## Konfigurator
+Der Konfigurator ist die Hauptanwendung. Die Seite führt in vier klaren Schritten: Größe, Böden, Cremes, Finish. Auf Desktop bleibt die Vorschau sticky. Ausgewählte Optionen müssen klar sichtbar sein, ohne die Seite bunt oder technisch wirken zu lassen.
+
+Drei kuratierte Startkombinationen helfen beim Einstieg:
+1. Signature – Vanille, Erdbeere, frische Beeren
+2. Intensiv – Schoko Ganache
+3. Frisch – Zitrone und essbare Blüten
+
+Alle Presets sind nur Startpunkte; jede Auswahl bleibt danach frei veränderbar.
+
+## Formulare
+Das Anfrageformular ist der einzige Conversion-Schritt. Es soll ruhig, hochwertig und kurz wirken. Konfiguration, Zutaten, Zubereitung und Richtpreis werden automatisch übertragen. Keine zusätzlichen Marketing-Formulare oder Newsletter-Elemente.
 
 ## Fotografie und 3D
-Food-Visuals sollen wie Studio-Food-Fotografie wirken: warm-neutral, kontrollierte Highlights, natürliche Textur, keine künstlich bunten Lichter. Alle Assets bleiben über stabile IDs austauschbar, damit spätere Photogrammetrie-/GLB-Versionen ohne Änderung der Konfigurationslogik eingesetzt werden können.
+Food-Visuals sollen wie Studio-Food-Fotografie wirken: warm-neutral, kontrollierte Highlights, natürliche Oberflächen, realistische Feuchtigkeit und keine künstlich bunten Lichter. Der 3D-Viewer erhält eine ruhige Studiofläche und möglichst wenig UI-Chrome.
+
+Assets bleiben über stabile IDs austauschbar. Neue Qualitätsstufen werden als Versionen ergänzt, z. B. `dough.vanilla.v2` oder `finish.chocolate.v2`, damit bessere Photoscan-/GLB-Versionen später ohne Änderung der Konfigurationslogik eingesetzt werden können.
+
+## Mobile
+Mobile ist gleichwertig zu Desktop. Presets stapeln sich, die 3D-Vorschau wird unter den Konfigurationsschritten gezeigt, Eingabeflächen bleiben mindestens fingerfreundlich und die Anfrage bleibt ohne horizontales Scrollen nutzbar.

@@ -80,9 +80,4 @@
 
   window.CakeCatalog = components;
   window.CakeCatalog.ingredientTotals = ingredientTotals;
-
-  var suggestionScript = document.createElement('script');
-  suggestionScript.src = 'assets/cake-suggestion.js';
-  suggestionScript.defer = true;
-  document.head.appendChild(suggestionScript);
 })();
