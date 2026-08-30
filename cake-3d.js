@@ -6,22 +6,21 @@
   brandLink.href = 'pastelitos-brand.css';
   document.head.appendChild(brandLink);
 
-  const logo = document.querySelector('.logo');
-  if (logo) logo.textContent = 'PASTELITOS';
-  const heroEyebrow = document.querySelector('.hero p');
-  if (heroEyebrow) heroEyebrow.textContent = 'SMALL BATCH · HANDMADE';
-  const heroTitle = document.getElementById('hero-title');
-  if (heroTitle) heroTitle.textContent = 'Dein Kuchen. Dein Geschmack.';
-
-  function loadAssets() {
+  function loadScript(src, ready) {
     return new Promise(resolve => {
-      if (window.PastelitosAssetsV1) return resolve(true);
+      if (ready()) return resolve(true);
       const s = document.createElement('script');
-      s.src = 'assets/asset-set-v1.js';
+      s.src = src;
       s.onload = () => resolve(true);
       s.onerror = () => resolve(false);
       document.head.appendChild(s);
     });
+  }
+
+  async function loadAssets() {
+    const v1 = await loadScript('assets/asset-set-v1.js', () => !!window.PastelitosAssetsV1);
+    const v2 = await loadScript('assets/asset-set-v2.js', () => !!window.PastelitosAssetsV2);
+    return v1 && v2;
   }
 
   if (!window.THREE) return;
@@ -29,7 +28,7 @@
   const canvas = document.getElementById('cakeCanvas');
   if (!canvas) return;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -99,8 +98,9 @@
     root.add(cakeGroup);
   }
 
-  function cloneTintedAsset(id, tint){
-    const obj = window.PastelitosAssetsV1.create(id);
+  function cloneTintedAsset(id, tint, family='v1'){
+    const factory = family==='v2' ? window.PastelitosAssetsV2 : window.PastelitosAssetsV1;
+    const obj = factory.create(id);
     obj.traverse(c=>{
       if(c.isMesh && c.material){
         c.material = c.material.clone();
@@ -112,8 +112,8 @@
   }
 
   function addSponge(radius,height,y,flavor){
-    const id = flavor === 'Schokolade' ? 'dough.chocolate' : 'dough.vanilla';
-    const a = cloneTintedAsset(id, doughTint[flavor] || 0xffffff);
+    const base = flavor === 'Schokolade' ? 'dough.chocolate.v2' : 'dough.vanilla.v2';
+    const a = cloneTintedAsset(base, doughTint[flavor] || 0xffffff, 'v2');
     a.scale.set(radius/1.65, height/.72, radius/1.65);
     a.position.y = y;
     cakeGroup.add(a);
@@ -129,8 +129,15 @@
   function addFinish(radius,bottom,top,flavor){
     if(flavor==='Keine') return;
     const h = top-bottom;
+    if(flavor==='Schokolade' && window.PastelitosAssetsV2){
+      const glaze = cloneTintedAsset('finish.chocolate.v2',0xffffff,'v2');
+      glaze.scale.set(radius/1.72,h,radius/1.72);
+      glaze.position.y = bottom;
+      cakeGroup.add(glaze);
+      return;
+    }
     const color = glazeColor[flavor] || glazeColor.Vanille;
-    const mat = new THREE.MeshPhysicalMaterial({color,roughness:flavor==='Schokolade'?.32:.57,clearcoat:flavor==='Schokolade'?.24:.04,clearcoatRoughness:.38,sheen:.16,transparent:true,opacity:flavor==='Vanille'?.9:.96});
+    const mat = new THREE.MeshPhysicalMaterial({color,roughness:.57,clearcoat:.04,clearcoatRoughness:.38,sheen:.16,transparent:true,opacity:flavor==='Vanille'?.9:.96});
     const shell = new THREE.Mesh(new THREE.CylinderGeometry(radius*1.025,radius*1.02,h,96,8,true),mat);
     shell.position.y = bottom+h/2; shell.castShadow = shell.receiveShadow = true; cakeGroup.add(shell);
     const topDisk = new THREE.Mesh(new THREE.CylinderGeometry(radius*1.025,radius*1.02,.11,96),mat.clone());
@@ -206,10 +213,10 @@
 
   window.Cake3D={update:build,resetView};
   loadAssets().then(ok=>{
-    assetsReady=ok && !!window.PastelitosAssetsV1;
-    if(!assetsReady){console.error('Pastelitos V1 assets could not be loaded.');return;}
+    assetsReady=ok && !!window.PastelitosAssetsV1 && !!window.PastelitosAssetsV2;
+    if(!assetsReady){console.error('Pastelitos assets could not be loaded.');return;}
     const badge=document.querySelector('.viewer-badge');
-    if(badge) badge.textContent='FOTO-ERDBEERE · PROTOTYP';
+    if(badge) badge.textContent='ASSET-SET · V2';
     if(pendingConfig) build(pendingConfig);
   });
 
