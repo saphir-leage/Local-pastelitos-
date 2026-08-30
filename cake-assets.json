@@ -1,0 +1,49 @@
+{
+  "renderingStandard": {
+    "name": "Photogrammetry PBR GLB",
+    "goal": "customer-facing photorealism",
+    "geometry": "retopologized photoscan or high-detail sculpt baked to production mesh",
+    "formats": ["glb", "gltf"],
+    "requiredMaps": ["baseColor", "normal", "roughness", "ambientOcclusion"],
+    "preferredMaps": ["subsurface", "height"],
+    "mobileTextureResolution": "1K-2K",
+    "desktopTextureResolution": "2K-4K",
+    "targetTrianglesPerPrimaryAsset": "20k-80k",
+    "rule": "Do not use primitive spheres/cylinders as final customer-facing food assets. Procedural geometry is fallback only."
+  },
+  "qualityBenchmark": {
+    "type": "photoscan",
+    "name": "Strawberry cake photoscan",
+    "provider": "Sketchfab",
+    "modelId": "ebea5910dc234c35b525478e7eda6aa3",
+    "source": "https://sketchfab.com/3d-models/strawberry-cake-ebea5910dc234c35b525478e7eda6aa3",
+    "license": "CC BY",
+    "note": "Interactive visual benchmark only; not used as a configurable production component."
+  },
+  "productionReference": {
+    "type": "photoscanned PBR model",
+    "name": "Strawberry Chocolate Cake",
+    "provider": "Poly Haven",
+    "assetId": "strawberry_chocolate_cake",
+    "source": "https://polyhaven.com/a/strawberry_chocolate_cake",
+    "license": "CC0",
+    "triangles": 27000,
+    "maxTextureResolution": "8K",
+    "maps": ["AO", "ARM", "Diffuse", "Metal", "NormalGL", "Roughness", "SSS"],
+    "note": "Defines the minimum visual quality bar for our own cake components."
+  },
+  "components": {
+    "dough.vanilla": {"assetType":"photoscanned-sponge","status":"to-source-or-scan","variantKey":"Vanille","bakingDataKey":"doughs.Vanille"},
+    "dough.chocolate": {"assetType":"photoscanned-sponge","status":"to-source-or-scan","variantKey":"Schokolade","bakingDataKey":"doughs.Schokolade"},
+    "dough.lemon": {"assetType":"photoscanned-sponge","status":"to-source-or-scan","variantKey":"Zitrone","bakingDataKey":"doughs.Zitrone"},
+    "dough.redVelvet": {"assetType":"photoscanned-sponge","status":"to-source-or-scan","variantKey":"Red Velvet","bakingDataKey":"doughs.Red Velvet"},
+    "dough.marble": {"assetType":"photoscanned-sponge","status":"to-source-or-scan","variantKey":"Marmor","bakingDataKey":"doughs.Marmor"},
+    "filling.buttercream": {"assetType":"sculpted-cream-with-PBR","status":"to-build","variantKey":"Buttercreme","bakingDataKey":"fillings.Buttercreme"},
+    "filling.strawberry": {"assetType":"sculpted-cream-plus-fruit-PBR","status":"to-build","variantKey":"Erdbeere","bakingDataKey":"fillings.Erdbeere"},
+    "finish.vanilla": {"assetType":"sculpted-frosting-shell-PBR","status":"to-build","variantKey":"Vanille","bakingDataKey":"glazes.Vanille"},
+    "fruit.strawberry": {"assetType":"photogrammetry","status":"source-selected","source":"https://sketchfab.com/3d-models/cc0-strawberry-01557f2e35d74a668aa5dcefd1ad1874","license":"CC0","optimization":"retopologize/decimate to 20k-40k triangles; bake 2K PBR"},
+    "fruit.raspberry": {"assetType":"photogrammetry","status":"source-selected","source":"https://sketchfab.com/3d-models/cc0-hirsute-raspberry-rubus-hirsutus-14111c88dc994402a6318f6c1ba1b6f6","license":"CC0","optimization":"retopologize/decimate to 20k-40k triangles; bake 2K PBR"},
+    "fruit.blueberry": {"assetType":"photogrammetry","status":"to-source-or-scan","optimization":"target 10k-25k triangles; 2K PBR"},
+    "decoration.flower": {"assetType":"photogrammetry-or-high-detail-scan","status":"to-source-or-scan","bakingDataKey":"decorations.Blumen"}
+  }
+}
