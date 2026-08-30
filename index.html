@@ -1,224 +1,32 @@
 <!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Pastelitos — Kuchen konfigurieren</title>
-  <meta name="description" content="Pastelitos Kuchen-Konfigurator: Teig, Creme, Finish und Dekoration zusammenstellen und direkt anfragen.">
-  <link rel="stylesheet" href="pastelitos-brand.css">
-</head>
-<body>
-  <header>
-    <nav aria-label="Hauptnavigation">
-      <div class="logo">PASTELITOS</div>
-      <div><a href="#konfigurator">Konfigurator</a><a href="#anfrage">Anfrage senden</a></div>
-    </nav>
-  </header>
-
-  <main>
-    <section id="konfigurator" class="configurator">
-      <div class="wrap">
-        <div class="intro">
-          <div><p class="eyebrow">Handmade · individuell · frisch</p><h1>Deine Torte, ganz nach deinem Geschmack.</h1></div>
-          <p class="intro-copy">Starte mit einer unserer Kombinationen oder stell alles selbst zusammen. Größe, Böden, Creme, Finish und Dekoration aktualisieren die Vorschau direkt.</p>
-        </div>
-
-        <section class="preset-section" aria-labelledby="presetTitle">
-          <div class="preset-heading"><h2 id="presetTitle">Drei gute Ausgangspunkte</h2><p>Jede Empfehlung bleibt vollständig anpassbar.</p></div>
-          <div class="preset-grid">
-            <button class="preset-card is-active" type="button" data-preset="signature"><span class="preset-card__tag">Signature</span><strong>Vanille & Erdbeere</strong><small>3 Vanilleböden · Erdbeercreme · Vanille-Finish · frische Beeren</small></button>
-            <button class="preset-card" type="button" data-preset="chocolate"><span class="preset-card__tag">Intensiv</span><strong>Schoko Ganache</strong><small>3 Schokoböden · Schokocreme · Schoko-Finish · pur</small></button>
-            <button class="preset-card" type="button" data-preset="lemon"><span class="preset-card__tag">Frisch</span><strong>Zitrone & Blüten</strong><small>2 Zitronenböden · Zitronencreme · Vanille-Finish · essbare Blüten</small></button>
-          </div>
-        </section>
-
-        <div class="config-grid">
-          <div class="config-panel">
-            <div class="section-block">
-              <div class="section-title"><h2><span class="step-label">01</span>Größe</h2><span>Basis des Kuchens</span></div>
-              <div class="choice-grid">
-                <label class="choice"><input type="radio" name="config-size" value="Klein" data-label="Klein · ca. 8 Personen" data-price="30"><span>Klein<br>ca. 8 Personen</span></label>
-                <label class="choice"><input type="radio" name="config-size" value="Mittel" data-label="Mittel · ca. 12 Personen" data-price="42" checked><span>Mittel<br>ca. 12 Personen</span></label>
-                <label class="choice"><input type="radio" name="config-size" value="Groß" data-label="Groß · ca. 18 Personen" data-price="58"><span>Groß<br>ca. 18 Personen</span></label>
-              </div>
-            </div>
-
-            <div class="section-block">
-              <div class="section-title"><h2><span class="step-label">02</span>Böden</h2><span>1 bis 4 Teiglagen</span></div>
-              <div class="layer-count"><button id="removeLayer" type="button">Weniger</button><output id="layerCount">3</output><button id="addLayer" type="button">Mehr</button></div>
-              <div id="layerControls"></div>
-            </div>
-
-            <div class="section-block">
-              <div class="section-title"><h2><span class="step-label">03</span>Cremes</h2><span>Zwischen den Teiglagen</span></div>
-              <div id="fillingControls"></div>
-            </div>
-
-            <div class="section-block config-group">
-              <div class="section-title"><h2><span class="step-label">04</span>Finish</h2><span>Außen und oben</span></div>
-              <label for="glaze">Glasur</label>
-              <select id="glaze">
-                <option value="Keine" data-price="0">Keine Glasur</option>
-                <option value="Vanille" data-price="5" selected>Vanille</option>
-                <option value="Schokolade" data-price="6">Schokolade</option>
-                <option value="Erdbeere" data-price="6">Erdbeere</option>
-                <option value="Pistazie" data-price="7">Pistazie</option>
-              </select>
-              <div class="section-title" style="margin-top:24px"><h3>Dekoration</h3><span>Optional</span></div>
-              <div class="extras">
-                <label class="extra"><input type="checkbox" name="config-decoration" value="Frische Beeren" data-price="7" checked>Frische Beeren</label>
-                <label class="extra"><input type="checkbox" name="config-decoration" value="Blumen" data-price="8">Essbare Blüten</label>
-                <label class="extra"><input type="checkbox" name="config-decoration" value="Streusel" data-price="4">Streusel</label>
-                <label class="extra"><input type="checkbox" name="config-decoration" value="Kerzen" data-price="3">Kerzen</label>
-              </div>
-            </div>
-          </div>
-
-          <aside class="config-summary" aria-label="Vorschau und Zusammenfassung">
-            <div class="cake-viewer">
-              <canvas id="cakeCanvas" aria-label="Interaktive 3D-Vorschau"></canvas>
-              <div class="viewer-topline"><span class="viewer-status" id="viewerStatus">3D lädt …</span><span class="viewer-quality">Live Preview</span></div>
-              <p class="viewer-hint">Mit Finger oder Maus drehen</p>
-            </div>
-            <div class="view-controls"><button id="rotateLeft" type="button">Links</button><button id="resetView" type="button">Reset</button><button id="rotateRight" type="button">Rechts</button></div>
-
-            <div class="summary-card">
-              <h3>Deine Torte</h3>
-              <ul class="summary-list"><li><span>Größe</span><strong id="summarySize">Mittel · 3 Schichten</strong></li></ul>
-              <ul id="configDetail" class="config-detail"></ul>
-              <div class="total"><span>Richtwert</span><output id="configPrice">73 €</output></div>
-              <a class="summary-cta" href="#anfrage">Diese Konfiguration anfragen</a>
-
-              <div class="detail-section"><h4>Zutaten</h4><ul id="ingredientList"></ul></div>
-              <div class="detail-section"><h4>Zubereitung</h4><ol id="prepList"></ol></div>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <section id="anfrage" class="mail-section">
-      <div class="mail-wrap">
-        <h2>Deine Konfiguration senden.</h2>
-        <p class="note">Der ausgewählte Kuchen, die Zutatenliste und die Zubereitung werden automatisch mit deiner Nachricht übermittelt.</p>
-        <form id="orderForm" action="https://formspree.io/f/xljeevyg" method="POST" enctype="multipart/form-data">
-          <div class="mail-grid">
-            <label>Dein Name<input name="name" autocomplete="name" required></label>
-            <label>E-Mail-Adresse<input name="email" type="email" autocomplete="email" required></label>
-            <label>Wunschtermin<input id="date" name="date" type="date" required></label>
-            <label>Telefon optional<input name="phone" type="tel" autocomplete="tel"></label>
-          </div>
-          <label>Nachricht<textarea name="message" placeholder="Anlass, Farben, Schriftzug oder weitere Wünsche"></textarea></label>
-          <input type="hidden" id="configuration" name="Konfiguration">
-          <input type="hidden" id="ingredientsField" name="Zutaten">
-          <input type="hidden" id="preparationField" name="Zubereitung">
-          <input type="hidden" id="estimatedPrice" name="Preis_Richtwert">
-          <label class="consent"><input type="checkbox" name="consent" required><span>Ich stimme der Verarbeitung meiner Angaben zur Bearbeitung dieser Anfrage zu.</span></label>
-          <p class="form-note">Die Mengen und Zubereitung sind aktuell Planungswerte für den Prototyp und werden vor einer tatsächlichen Produktion final geprüft.</p>
-          <button class="send-button" id="submitBtn" type="submit">Konfiguration senden</button>
-          <div id="formError" class="error" role="alert"></div><div id="formSuccess" class="success" role="status"></div>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer>Pastelitos · <a href="privacy.html">Datenschutz</a></footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
-  <script src="cake-components.js"></script>
-  <script src="cake-3d.js"></script>
-  <script>
-    const catalog=window.CakeCatalog;
-    const doughs=catalog?.doughs||{};
-    const fillings=catalog?.fillings||{};
-    const state={layers:['Vanille','Vanille','Vanille'],fillings:['Erdbeere','Erdbeere']};
-    const doughOptions=Object.keys(doughs),fillingOptions=Object.keys(fillings);
-    const layerControls=document.getElementById('layerControls'),fillingControls=document.getElementById('fillingControls'),layerCount=document.getElementById('layerCount');
-    const presets={
-      signature:{size:'Mittel',layers:['Vanille','Vanille','Vanille'],fillings:['Erdbeere','Erdbeere'],glaze:'Vanille',decorations:['Frische Beeren']},
-      chocolate:{size:'Mittel',layers:['Schokolade','Schokolade','Schokolade'],fillings:['Schokolade','Schokolade'],glaze:'Schokolade',decorations:[]},
-      lemon:{size:'Klein',layers:['Zitrone','Zitrone'],fillings:['Zitrone'],glaze:'Vanille',decorations:['Blumen']}
-    };
-
-    function optionHtml(values,selected){return values.map(v=>`<option value="${v}" ${v===selected?'selected':''}>${v}</option>`).join('')}
-    function renderControls(){
-      layerCount.textContent=state.layers.length;
-      layerControls.innerHTML=state.layers.map((flavor,i)=>`<div class="builder-row"><span class="row-title">Teiglage ${i+1}</span><label>Teig<select data-layer="${i}">${optionHtml(doughOptions,flavor)}</select></label></div>`).join('');
-      fillingControls.innerHTML=state.fillings.map((flavor,i)=>`<div class="builder-row"><span class="row-title">Zwischen Lage ${i+1} und ${i+2}</span><label>Creme<select data-filling="${i}">${optionHtml(fillingOptions,flavor)}</select></label></div>`).join('')||'<p style="color:var(--pt-muted);font-size:.8rem">Bei einer Teiglage ist keine Zwischencreme nötig.</p>';
-      document.querySelectorAll('[data-layer]').forEach(el=>el.addEventListener('change',e=>{state.layers[Number(e.target.dataset.layer)]=e.target.value;markCustom();update()}));
-      document.querySelectorAll('[data-filling]').forEach(el=>el.addEventListener('change',e=>{state.fillings[Number(e.target.dataset.filling)]=e.target.value;markCustom();update()}));
-    }
-
-    function setActivePreset(name){document.querySelectorAll('[data-preset]').forEach(el=>el.classList.toggle('is-active',el.dataset.preset===name))}
-    function markCustom(){setActivePreset(null)}
-    function applyPreset(name){
-      const p=presets[name]; if(!p)return;
-      const size=document.querySelector(`input[name="config-size"][value="${p.size}"]`); if(size)size.checked=true;
-      state.layers=[...p.layers]; state.fillings=[...p.fillings];
-      document.getElementById('glaze').value=p.glaze;
-      document.querySelectorAll('input[name="config-decoration"]').forEach(el=>{el.checked=p.decorations.includes(el.value)});
-      renderControls(); setActivePreset(name); update();
-    }
-
-    function getConfig(){
-      const sizeEl=document.querySelector('input[name="config-size"]:checked');
-      const decorations=[...document.querySelectorAll('input[name="config-decoration"]:checked')];
-      const glaze=document.getElementById('glaze');
-      return {size:sizeEl.value,sizeLabel:sizeEl.dataset.label,sizePrice:Number(sizeEl.dataset.price),layers:[...state.layers],fillings:[...state.fillings],glaze:glaze.value,glazePrice:Number(glaze.selectedOptions[0].dataset.price),decorations:decorations.map(d=>d.value),decorPrice:decorations.reduce((n,d)=>n+Number(d.dataset.price),0)};
-    }
-
-    function preparationFor(c){
-      const uniqueDough=[...new Set(c.layers)],uniqueFill=[...new Set(c.fillings)];
-      const steps=[`Teige vorbereiten: ${uniqueDough.join(' und ')}. Zutaten abwiegen, Teige glatt rühren und die einzelnen Böden passend zur gewählten Größe backen.`,'Böden vollständig auskühlen lassen und bei Bedarf begradigen.'];
-      if(uniqueFill.length)steps.push(`Cremes vorbereiten: ${uniqueFill.join(' und ')}. Kühl und streichfähig verarbeiten.`);
-      if(c.layers.length>1)steps.push('Kuchen schichten: Boden und Creme abwechselnd sauber aufbauen, anschließend kalt stellen und stabilisieren.');
-      if(c.glaze!=='Keine')steps.push(`${c.glaze}-Finish gleichmäßig außen und oben auftragen und die Oberfläche sauber abziehen.`);
-      if(c.decorations.length)steps.push(`Dekoration ergänzen: ${c.decorations.join(', ')}. Erst kurz vor Ausgabe final platzieren.`);
-      steps.push('Kuchen bis zur Übergabe gekühlt lagern und vor dem Servieren temperieren.');
-      return steps;
-    }
-
-    function update(){
-      const c=getConfig();
-      const price=c.sizePrice+(c.layers.length-1)*8+c.layers.reduce((n,v)=>n+(doughs[v]?.price||0),0)+c.fillings.reduce((n,v)=>n+(fillings[v]?.price||0),0)+c.glazePrice+c.decorPrice;
-      c.price=price;
-      document.getElementById('summarySize').textContent=`${c.sizeLabel} · ${c.layers.length} ${c.layers.length===1?'Schicht':'Schichten'}`;
-      const detail=[...c.layers.map((v,i)=>`Teiglage ${i+1}: ${v}`),...c.fillings.map((v,i)=>`Creme ${i+1}: ${v}`),`Finish: ${c.glaze}`,`Dekoration: ${c.decorations.length?c.decorations.join(', '):'keine'}`];
-      document.getElementById('configDetail').innerHTML=detail.map(x=>`<li>${x}</li>`).join('');
-      document.getElementById('configPrice').textContent=`${price} €`;
-      const ingredients=catalog?.ingredientTotals?catalog.ingredientTotals(c):[];
-      document.getElementById('ingredientList').innerHTML=ingredients.map(i=>`<li>${i.name}: ${i.amount} ${i.unit}</li>`).join('');
-      const prep=preparationFor(c);
-      document.getElementById('prepList').innerHTML=prep.map(s=>`<li>${s}</li>`).join('');
-      document.getElementById('configuration').value=[c.sizeLabel,...detail].join(' | ');
-      document.getElementById('ingredientsField').value=ingredients.map(i=>`${i.name}: ${i.amount} ${i.unit}`).join('\n');
-      document.getElementById('preparationField').value=prep.map((s,i)=>`${i+1}. ${s}`).join('\n');
-      document.getElementById('estimatedPrice').value=`${price} € unverbindlicher Richtwert`;
-      if(window.Cake3D)window.Cake3D.update(c);
-      return c;
-    }
-
-    document.querySelectorAll('[data-preset]').forEach(el=>el.addEventListener('click',()=>applyPreset(el.dataset.preset)));
-    document.getElementById('addLayer').addEventListener('click',()=>{if(state.layers.length>=4)return;state.layers.push('Vanille');state.fillings.push('Buttercreme');markCustom();renderControls();update()});
-    document.getElementById('removeLayer').addEventListener('click',()=>{if(state.layers.length<=1)return;state.layers.pop();state.fillings.pop();markCustom();renderControls();update()});
-    document.querySelectorAll('input[name="config-size"],input[name="config-decoration"],#glaze').forEach(el=>el.addEventListener('change',()=>{markCustom();update()}));
-    window.addEventListener('pastelitos:viewer-ready',()=>{const el=document.getElementById('viewerStatus');if(el)el.textContent='3D bereit'});
-
-    const dateInput=document.getElementById('date'); dateInput.min=new Date().toISOString().split('T')[0];
-    const form=document.getElementById('orderForm'),submitBtn=document.getElementById('submitBtn'),errEl=document.getElementById('formError'),okEl=document.getElementById('formSuccess');
-    form.addEventListener('submit',async e=>{
-      e.preventDefault();errEl.style.display='none';okEl.style.display='none';if(!form.checkValidity()){form.reportValidity();return}
-      update();submitBtn.disabled=true;submitBtn.textContent='Wird gesendet …';
-      try{
-        const data=new FormData(form),canvas=document.getElementById('cakeCanvas');
-        if(canvas?.toBlob){const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',.92));if(blob)data.append('Kuchen_Vorschau',blob,'pastelitos-konfiguration.png')}
-        const response=await fetch(form.action,{method:'POST',body:data,headers:{Accept:'application/json'}});if(!response.ok)throw new Error('Die Anfrage konnte nicht gesendet werden. Bitte versuche es später erneut.');
-        okEl.textContent='Die Konfiguration wurde gesendet.';okEl.style.display='block';
-      }catch(err){errEl.textContent=err.message||'Beim Senden ist ein Fehler aufgetreten.';errEl.style.display='block'}
-      finally{submitBtn.disabled=false;submitBtn.textContent='Konfiguration senden'}
-    });
-
-    renderControls();window.addEventListener('load',()=>setTimeout(()=>applyPreset('signature'),100));
-  </script>
-</body>
-</html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pastelitos — Torte gestalten</title><meta name="description" content="Gestalte deine Pastelitos Torte live in 3D."><link rel="stylesheet" href="pastelitos-brand.css"></head>
+<body><header><nav><div class="logo">PASTELITOS</div><button class="nav-cta" type="button" data-open-request>Torte anfragen</button></nav></header>
+<main id="konfigurator" class="workspace-wrap">
+<section class="compact-intro"><div><p class="eyebrow">Handmade · individuell · frisch</p><h1>Gestalte deine Torte.</h1></div><div class="quick-start"><span>Starte mit</span><button type="button" data-preset="signature" class="is-active">Vanille & Erdbeere</button><button type="button" data-preset="chocolate">Schoko</button><button type="button" data-preset="lemon">Zitrone</button><button type="button" data-custom>Frei</button></div></section>
+<nav class="step-nav" aria-label="Konfigurationsschritte"><button data-step="0" class="is-active"><b>01</b><span>Größe</span><small id="stepSize">Mittel</small></button><button data-step="1"><b>02</b><span>Böden</span><small id="stepLayers">3 × Vanille</small></button><button data-step="2"><b>03</b><span>Cremes</span><small id="stepFillings">2 × Erdbeere</small></button><button data-step="3"><b>04</b><span>Finish</span><small id="stepFinish">Vanille</small></button></nav>
+<section class="config-workspace">
+<div class="editor-card">
+<div class="step-pane is-active" data-pane="0"><p class="step-kicker">01 · Größe</p><h2>Für wie viele Personen?</h2><p class="step-copy">Wähle die passende Größe. Die Vorschau passt sich direkt an.</p><div class="choice-stack"><label class="choice"><input type="radio" name="config-size" value="Klein" data-label="Klein · ca. 8 Personen" data-price="30"><span><b>Klein</b><small>ca. 8 Personen</small></span></label><label class="choice"><input type="radio" name="config-size" value="Mittel" data-label="Mittel · ca. 12 Personen" data-price="42" checked><span><b>Mittel</b><small>ca. 12 Personen</small></span></label><label class="choice"><input type="radio" name="config-size" value="Groß" data-label="Groß · ca. 18 Personen" data-price="58"><span><b>Groß</b><small>ca. 18 Personen</small></span></label></div></div>
+<div class="step-pane" data-pane="1"><p class="step-kicker">02 · Böden</p><h2>Wie soll deine Torte aufgebaut sein?</h2><div class="layer-count"><button id="removeLayer" type="button">−</button><output id="layerCount">3</output><button id="addLayer" type="button">+</button><span>Lagen</span></div><div id="layerControls"></div></div>
+<div class="step-pane" data-pane="2"><p class="step-kicker">03 · Cremes</p><h2>Was kommt zwischen die Böden?</h2><p class="step-copy">Jede Zwischenlage kann einen eigenen Geschmack bekommen.</p><div id="fillingControls"></div></div>
+<div class="step-pane" data-pane="3"><p class="step-kicker">04 · Finish</p><h2>Der letzte Schliff.</h2><label class="field-label">Glasur<select id="glaze"><option value="Keine" data-price="0">Keine Glasur</option><option value="Vanille" data-price="5" selected>Vanille</option><option value="Schokolade" data-price="6">Schokolade</option><option value="Erdbeere" data-price="6">Erdbeere</option><option value="Pistazie" data-price="7">Pistazie</option></select></label><h3 class="mini-title">Dekoration</h3><div class="extras"><label class="extra"><input type="checkbox" name="config-decoration" value="Frische Beeren" data-price="7" checked>Frische Beeren</label><label class="extra"><input type="checkbox" name="config-decoration" value="Blumen" data-price="8">Essbare Blüten</label><label class="extra"><input type="checkbox" name="config-decoration" value="Streusel" data-price="4">Streusel</label><label class="extra"><input type="checkbox" name="config-decoration" value="Kerzen" data-price="3">Kerzen</label></div></div>
+<div class="editor-actions"><button id="prevStep" type="button" class="secondary">Zurück</button><button id="nextStep" type="button">Weiter</button></div></div>
+<div class="visual-stage"><div class="cake-viewer"><canvas id="cakeCanvas" aria-label="Interaktive 3D-Vorschau"></canvas><div class="viewer-topline"><span id="viewerStatus">3D lädt …</span><span>Live Preview</span></div><p class="viewer-hint">Mit Finger oder Maus drehen</p></div><div class="view-controls"><button id="rotateLeft" type="button">Links</button><button id="resetView" type="button">Reset</button><button id="rotateRight" type="button">Rechts</button></div></div>
+<aside class="summary-card"><p class="step-kicker">Deine Torte</p><h2 id="summarySize">Mittel · ca. 12 Personen</h2><ul id="configDetail" class="config-detail"></ul><div class="total"><span>Richtwert</span><output id="configPrice">73 €</output></div><button class="summary-cta" type="button" data-open-request>Torte anfragen</button><details><summary>Zutaten ansehen</summary><ul id="ingredientList"></ul></details><details><summary>Zubereitung ansehen</summary><ol id="prepList"></ol></details></aside>
+</section></main>
+<div class="request-overlay" id="requestOverlay" aria-hidden="true"><div class="request-backdrop" data-close-request></div><section class="request-drawer" role="dialog" aria-modal="true" aria-labelledby="requestTitle"><button class="drawer-close" type="button" data-close-request>×</button><p class="step-kicker">05 · Anfrage</p><h2 id="requestTitle">Deine Torte anfragen.</h2><p class="step-copy">Konfiguration, Zutaten, Zubereitung und die aktuelle 3D-Ansicht werden automatisch mitgesendet.</p><form id="orderForm" action="https://formspree.io/f/xljeevyg" method="POST" enctype="multipart/form-data"><div class="mail-grid"><label>Name<input name="name" autocomplete="name" required></label><label>E-Mail<input name="email" type="email" autocomplete="email" required></label><label>Wunschtermin<input id="date" name="date" type="date" required></label><label>Telefon optional<input name="phone" type="tel"></label></div><label>Nachricht<textarea name="message" placeholder="Anlass, Farben, Schriftzug oder weitere Wünsche"></textarea></label><input type="hidden" id="configuration" name="Konfiguration"><input type="hidden" id="ingredientsField" name="Zutaten"><input type="hidden" id="preparationField" name="Zubereitung"><input type="hidden" id="estimatedPrice" name="Preis_Richtwert"><label class="consent"><input type="checkbox" name="consent" required><span>Ich stimme der Verarbeitung meiner Angaben zur Bearbeitung dieser Anfrage zu.</span></label><p class="form-note">Mengen und Zubereitung sind Planungswerte und werden vor Produktion final geprüft.</p><button class="send-button" id="submitBtn" type="submit">Konfiguration senden</button><div id="formError" class="error"></div><div id="formSuccess" class="success"></div></form></section></div>
+<footer>Pastelitos · <a href="privacy.html">Datenschutz</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script><script src="cake-components.js"></script><script src="cake-3d.js"></script>
+<script>
+const catalog=window.CakeCatalog,doughs=catalog?.doughs||{},fillings=catalog?.fillings||{};const state={layers:['Vanille','Vanille','Vanille'],fillings:['Erdbeere','Erdbeere']};let activeStep=0;const doughOptions=Object.keys(doughs),fillingOptions=Object.keys(fillings),layerControls=document.getElementById('layerControls'),fillingControls=document.getElementById('fillingControls'),layerCount=document.getElementById('layerCount');const presets={signature:{size:'Mittel',layers:['Vanille','Vanille','Vanille'],fillings:['Erdbeere','Erdbeere'],glaze:'Vanille',decorations:['Frische Beeren']},chocolate:{size:'Mittel',layers:['Schokolade','Schokolade','Schokolade'],fillings:['Schokolade','Schokolade'],glaze:'Schokolade',decorations:[]},lemon:{size:'Klein',layers:['Zitrone','Zitrone'],fillings:['Zitrone'],glaze:'Vanille',decorations:['Blumen']}};
+function optionHtml(v,s){return v.map(x=>`<option value="${x}" ${x===s?'selected':''}>${x}</option>`).join('')}function renderControls(){layerCount.textContent=state.layers.length;layerControls.innerHTML=state.layers.map((v,i)=>`<label class="builder-row"><span>Boden ${i+1}</span><select data-layer="${i}">${optionHtml(doughOptions,v)}</select></label>`).join('');fillingControls.innerHTML=state.fillings.map((v,i)=>`<label class="builder-row"><span>Zwischen ${i+1} & ${i+2}</span><select data-filling="${i}">${optionHtml(fillingOptions,v)}</select></label>`).join('')||'<p class="step-copy">Bei einer Lage ist keine Zwischencreme nötig.</p>';document.querySelectorAll('[data-layer]').forEach(e=>e.onchange=x=>{state.layers[+x.target.dataset.layer]=x.target.value;markCustom();update()});document.querySelectorAll('[data-filling]').forEach(e=>e.onchange=x=>{state.fillings[+x.target.dataset.filling]=x.target.value;markCustom();update()})}
+function setStep(n){activeStep=Math.max(0,Math.min(3,n));document.querySelectorAll('[data-pane]').forEach(e=>e.classList.toggle('is-active',+e.dataset.pane===activeStep));document.querySelectorAll('[data-step]').forEach(e=>{e.classList.toggle('is-active',+e.dataset.step===activeStep);e.classList.toggle('is-done',+e.dataset.step<activeStep)});document.getElementById('prevStep').disabled=activeStep===0;document.getElementById('nextStep').textContent=activeStep===3?'Torte anfragen':'Weiter'}
+function markCustom(){document.querySelectorAll('[data-preset]').forEach(e=>e.classList.remove('is-active'));document.querySelector('[data-custom]').classList.add('is-active')}function applyPreset(name){const p=presets[name];if(!p)return;document.querySelector(`input[name="config-size"][value="${p.size}"]`).checked=true;state.layers=[...p.layers];state.fillings=[...p.fillings];glaze.value=p.glaze;document.querySelectorAll('input[name="config-decoration"]').forEach(e=>e.checked=p.decorations.includes(e.value));renderControls();document.querySelectorAll('[data-preset],[data-custom]').forEach(e=>e.classList.toggle('is-active',e.dataset.preset===name));update()}
+function getConfig(){const s=document.querySelector('input[name="config-size"]:checked'),d=[...document.querySelectorAll('input[name="config-decoration"]:checked')],g=glaze;return{size:s.value,sizeLabel:s.dataset.label,sizePrice:+s.dataset.price,layers:[...state.layers],fillings:[...state.fillings],glaze:g.value,glazePrice:+g.selectedOptions[0].dataset.price,decorations:d.map(x=>x.value),decorPrice:d.reduce((n,x)=>n+(+x.dataset.price),0)}}
+function preparationFor(c){const d=[...new Set(c.layers)],f=[...new Set(c.fillings)],s=[`Teige vorbereiten: ${d.join(' und ')}. Zutaten abwiegen und Böden backen.`,'Böden vollständig auskühlen lassen und begradigen.'];if(f.length)s.push(`Cremes vorbereiten: ${f.join(' und ')}.`);if(c.layers.length>1)s.push('Böden und Cremes sauber schichten und kalt stabilisieren.');if(c.glaze!=='Keine')s.push(`${c.glaze}-Finish außen und oben auftragen.`);if(c.decorations.length)s.push(`Dekoration ergänzen: ${c.decorations.join(', ')}.`);s.push('Bis zur Übergabe gekühlt lagern.');return s}
+function update(){const c=getConfig(),price=c.sizePrice+(c.layers.length-1)*8+c.layers.reduce((n,v)=>n+(doughs[v]?.price||0),0)+c.fillings.reduce((n,v)=>n+(fillings[v]?.price||0),0)+c.glazePrice+c.decorPrice;c.price=price;summarySize.textContent=c.sizeLabel;const detail=[`${c.layers.length} Böden · ${[...new Set(c.layers)].join(' / ')}`,`${c.fillings.length?c.fillings.length+' Cremes · '+[...new Set(c.fillings)].join(' / '):'ohne Zwischencreme'}`,`Finish · ${c.glaze}`,`Deko · ${c.decorations.length?c.decorations.join(', '):'keine'}`];configDetail.innerHTML=detail.map(x=>`<li>${x}</li>`).join('');configPrice.textContent=`${price} €`;stepSize.textContent=c.size;stepLayers.textContent=`${c.layers.length} × ${[...new Set(c.layers)].join('/')}`;stepFillings.textContent=c.fillings.length?`${c.fillings.length} × ${[...new Set(c.fillings)].join('/')}`:'Keine';stepFinish.textContent=c.glaze;const ing=catalog?.ingredientTotals?catalog.ingredientTotals(c):[],prep=preparationFor(c);ingredientList.innerHTML=ing.map(i=>`<li>${i.name}: ${i.amount} ${i.unit}</li>`).join('');prepList.innerHTML=prep.map(x=>`<li>${x}</li>`).join('');configuration.value=[c.sizeLabel,...detail].join(' | ');ingredientsField.value=ing.map(i=>`${i.name}: ${i.amount} ${i.unit}`).join('\n');preparationField.value=prep.map((x,i)=>`${i+1}. ${x}`).join('\n');estimatedPrice.value=`${price} € unverbindlicher Richtwert`;window.Cake3D?.update(c);return c}
+function openRequest(){update();requestOverlay.classList.add('is-open');requestOverlay.setAttribute('aria-hidden','false');document.body.classList.add('drawer-open')}function closeRequest(){requestOverlay.classList.remove('is-open');requestOverlay.setAttribute('aria-hidden','true');document.body.classList.remove('drawer-open')}
+document.querySelectorAll('[data-step]').forEach(e=>e.onclick=()=>setStep(+e.dataset.step));prevStep.onclick=()=>setStep(activeStep-1);nextStep.onclick=()=>activeStep===3?openRequest():setStep(activeStep+1);document.querySelectorAll('[data-preset]').forEach(e=>e.onclick=()=>applyPreset(e.dataset.preset));document.querySelector('[data-custom]').onclick=()=>markCustom();addLayer.onclick=()=>{if(state.layers.length<4){state.layers.push('Vanille');state.fillings.push('Buttercreme');markCustom();renderControls();update()}};removeLayer.onclick=()=>{if(state.layers.length>1){state.layers.pop();state.fillings.pop();markCustom();renderControls();update()}};document.querySelectorAll('input[name="config-size"],input[name="config-decoration"],#glaze').forEach(e=>e.onchange=()=>{markCustom();update()});document.querySelectorAll('[data-open-request]').forEach(e=>e.onclick=openRequest);document.querySelectorAll('[data-close-request]').forEach(e=>e.onclick=closeRequest);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRequest()});window.addEventListener('pastelitos:viewer-ready',()=>viewerStatus.textContent='3D bereit');date.min=new Date().toISOString().split('T')[0];
+orderForm.addEventListener('submit',async e=>{e.preventDefault();formError.style.display=formSuccess.style.display='none';if(!orderForm.checkValidity()){orderForm.reportValidity();return}update();submitBtn.disabled=true;submitBtn.textContent='Wird gesendet …';try{const data=new FormData(orderForm),canvas=document.getElementById('cakeCanvas');if(canvas?.toBlob){const blob=await new Promise(r=>canvas.toBlob(r,'image/png',.92));if(blob)data.append('Kuchen_Vorschau',blob,'pastelitos-konfiguration.png')}const r=await fetch(orderForm.action,{method:'POST',body:data,headers:{Accept:'application/json'}});if(!r.ok)throw new Error('Die Anfrage konnte nicht gesendet werden.');formSuccess.textContent='Die Konfiguration wurde gesendet.';formSuccess.style.display='block'}catch(x){formError.textContent=x.message;formError.style.display='block'}finally{submitBtn.disabled=false;submitBtn.textContent='Konfiguration senden'}});
+renderControls();setStep(0);window.addEventListener('load',()=>setTimeout(()=>applyPreset('signature'),100));
+</script></body></html>
