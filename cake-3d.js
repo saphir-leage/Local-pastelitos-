@@ -1,458 +1,251 @@
 (() => {
   'use strict';
 
-  if (!window.THREE) {
-    console.error('Three.js is required for the cake renderer.');
-    return;
+  function loadCatalog(done) {
+    if (window.CakeCatalog) return done();
+    const script = document.createElement('script');
+    script.src = 'cake-components.js';
+    script.onload = done;
+    script.onerror = done;
+    document.head.appendChild(script);
   }
 
-  const THREE = window.THREE;
-  const canvas = document.getElementById('cakeCanvas');
-  if (!canvas) return;
+  loadCatalog(() => {
+    if (!window.THREE) {
+      console.error('Three.js is required for the cake renderer.');
+      return;
+    }
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+    const THREE = window.THREE;
+    const canvas = document.getElementById('cakeCanvas');
+    if (!canvas) return;
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xfff9fb);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.07;
 
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-  camera.position.set(5.8, 4.1, 7.4);
-  camera.lookAt(0, 1.45, 0);
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf4efe9);
 
-  const world = new THREE.Group();
-  scene.add(world);
+    const camera = new THREE.PerspectiveCamera(31, 1, 0.1, 100);
+    camera.position.set(5.9, 3.85, 7.7);
+    camera.lookAt(0, 1.4, 0);
 
-  const cakeRoot = new THREE.Group();
-  cakeRoot.rotation.y = -0.35;
-  world.add(cakeRoot);
+    const root = new THREE.Group();
+    root.rotation.set(-0.055, -0.38, 0);
+    scene.add(root);
 
-  const hemi = new THREE.HemisphereLight(0xfff6f0, 0x7a6670, 2.1);
-  scene.add(hemi);
+    function random(seed) {
+      let t = seed + 0x6D2B79F5;
+      return () => {
+        t += 0x6D2B79F5;
+        let r = Math.imul(t ^ (t >>> 15), 1 | t);
+        r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+        return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+      };
+    }
 
-  const key = new THREE.DirectionalLight(0xfff1df, 4.3);
-  key.position.set(4.5, 7.5, 5.2);
-  key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
-  key.shadow.camera.near = 0.5;
-  key.shadow.camera.far = 30;
-  key.shadow.camera.left = -7;
-  key.shadow.camera.right = 7;
-  key.shadow.camera.top = 7;
-  key.shadow.camera.bottom = -7;
-  key.shadow.bias = -0.00015;
-  scene.add(key);
+    function studioEnvironment() {
+      const c = document.createElement('canvas');
+      c.width = 1024; c.height = 512;
+      const ctx = c.getContext('2d');
+      const bg = ctx.createLinearGradient(0, 0, 0, 512);
+      bg.addColorStop(0, '#fffaf4'); bg.addColorStop(.55, '#e8ddd4'); bg.addColorStop(1, '#85766d');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, 1024, 512);
+      const softbox = ctx.createRadialGradient(235, 160, 5, 235, 160, 250);
+      softbox.addColorStop(0, 'rgba(255,255,255,1)'); softbox.addColorStop(.25, 'rgba(255,250,240,.85)'); softbox.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = softbox; ctx.fillRect(0, 0, 520, 410);
+      const rim = ctx.createRadialGradient(800, 210, 4, 800, 210, 180);
+      rim.addColorStop(0, 'rgba(225,236,255,.72)'); rim.addColorStop(1, 'rgba(225,236,255,0)');
+      ctx.fillStyle = rim; ctx.fillRect(600, 40, 424, 380);
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      const env = pmrem.fromEquirectangular(tex).texture;
+      tex.dispose(); pmrem.dispose();
+      return env;
+    }
+    scene.environment = studioEnvironment();
 
-  const fill = new THREE.PointLight(0xffc9d8, 22, 18, 2);
-  fill.position.set(-5, 4.8, 3.2);
-  scene.add(fill);
+    const hemi = new THREE.HemisphereLight(0xfff8ef, 0x695f5b, 1.35);
+    scene.add(hemi);
+    const key = new THREE.DirectionalLight(0xfff4e7, 4.7);
+    key.position.set(4.4, 7.2, 5.2); key.castShadow = true; key.shadow.mapSize.set(2048, 2048);
+    key.shadow.camera.left = -6; key.shadow.camera.right = 6; key.shadow.camera.top = 6; key.shadow.camera.bottom = -6; key.shadow.bias = -0.0002;
+    scene.add(key);
+    const fill = new THREE.PointLight(0xffe0df, 11, 16, 2); fill.position.set(-4.4, 3.3, 4.3); scene.add(fill);
+    const rim = new THREE.PointLight(0xdce7ff, 9, 15, 2); rim.position.set(3.8, 4.4, -5.2); scene.add(rim);
 
-  const rim = new THREE.PointLight(0xdde8ff, 15, 16, 2);
-  rim.position.set(3.4, 3.4, -5.6);
-  scene.add(rim);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshStandardMaterial({ color: 0xece3dc, roughness: .92 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -0.12; floor.receiveShadow = true; scene.add(floor);
 
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0xf3e7e9, roughness: 0.92, metalness: 0 });
-  const ground = new THREE.Mesh(new THREE.CircleGeometry(7, 96), groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -0.11;
-  ground.receiveShadow = true;
-  scene.add(ground);
+    const plate = new THREE.Mesh(new THREE.CylinderGeometry(2.7, 2.83, .11, 128), new THREE.MeshPhysicalMaterial({ color: 0xf7f3ef, roughness: .22, clearcoat: .8, clearcoatRoughness: .16 }));
+    plate.position.y = -.02; plate.castShadow = plate.receiveShadow = true; root.add(plate);
+    const rimPlate = new THREE.Mesh(new THREE.TorusGeometry(2.45, .045, 12, 128), new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: .19, clearcoat: 1 }));
+    rimPlate.rotation.x = Math.PI / 2; rimPlate.position.y = .045; root.add(rimPlate);
 
-  const plate = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.55, 2.7, 0.12, 96),
-    new THREE.MeshPhysicalMaterial({ color: 0xfbfafa, roughness: 0.2, metalness: 0, clearcoat: 0.85, clearcoatRoughness: 0.18 })
-  );
-  plate.position.y = 0;
-  plate.receiveShadow = true;
-  plate.castShadow = true;
-  cakeRoot.add(plate);
+    let cakeGroup = new THREE.Group(); root.add(cakeGroup);
+    let currentConfig = null;
 
-  const plateRim = new THREE.Mesh(
-    new THREE.TorusGeometry(2.35, 0.055, 12, 96),
-    new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.18, clearcoat: 1 })
-  );
-  plateRim.rotation.x = Math.PI / 2;
-  plateRim.position.y = 0.07;
-  cakeRoot.add(plateRim);
+    function disposeObject(object) {
+      object.traverse(child => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) (Array.isArray(child.material) ? child.material : [child.material]).forEach(m => m.dispose());
+      });
+    }
 
-  let currentConfig = null;
-  let cakeGroup = new THREE.Group();
-  cakeRoot.add(cakeGroup);
+    function shadow(mesh) { mesh.castShadow = true; mesh.receiveShadow = true; return mesh; }
 
-  function random(seed) {
-    let t = seed + 0x6D2B79F5;
-    return function () {
-      t += 0x6D2B79F5;
-      let r = Math.imul(t ^ (t >>> 15), 1 | t);
-      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
-      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    function noisyTexture(base, seed, contrast = .16, pores = 2400) {
+      const c = document.createElement('canvas'); c.width = c.height = 512;
+      const ctx = c.getContext('2d'); ctx.fillStyle = base; ctx.fillRect(0, 0, 512, 512);
+      const rnd = random(seed);
+      for (let i = 0; i < pores; i++) {
+        const light = rnd() > .48;
+        const alpha = .018 + rnd() * .095;
+        ctx.fillStyle = light ? `rgba(255,245,218,${alpha})` : `rgba(71,42,24,${alpha * contrast * 4})`;
+        const s = .7 + rnd() * 3.3;
+        ctx.beginPath(); ctx.ellipse(rnd()*512, rnd()*512, s, s*(.5+rnd()), rnd()*Math.PI, 0, Math.PI*2); ctx.fill();
+      }
+      const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(2.4, 1.25);
+      tex.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8); return tex;
+    }
+
+    function roughnessTexture(seed, strength=.35) {
+      const c = document.createElement('canvas'); c.width = c.height = 256; const ctx = c.getContext('2d'); const img = ctx.createImageData(256,256); const rnd=random(seed);
+      for(let i=0;i<img.data.length;i+=4){const v=Math.round(120+rnd()*110*strength);img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=255;} ctx.putImageData(img,0,0);
+      const tex=new THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(3,2);return tex;
+    }
+
+    const textures = {
+      vanilla: noisyTexture('#d4a05e', 11, .18), chocolate: noisyTexture('#59301f', 12, .24), lemon: noisyTexture('#d1ae48', 13, .15),
+      red: noisyTexture('#792126', 14, .24), marble: noisyTexture('#a87552', 15, .2), cream: noisyTexture('#eadbc8', 16, .055, 1200),
+      crumbRough: roughnessTexture(44, .7), creamRough: roughnessTexture(45, .22)
     };
-  }
+    const doughTex = { Vanille:textures.vanilla, Schokolade:textures.chocolate, Zitrone:textures.lemon, 'Red Velvet':textures.red, Marmor:textures.marble };
+    const doughColor = { Vanille:0xd7a464, Schokolade:0x5d3422, Zitrone:0xd4b24c, 'Red Velvet':0x7e2529, Marmor:0xaa7955 };
+    const fillingColor = { Buttercreme:0xf2e2c7, Erdbeere:0xde7188, Schokolade:0x603426, Zitrone:0xead06a, Pistazie:0x9db57b };
+    const glazeColor = { Vanille:0xeadbc8, Schokolade:0x4f2c22, Erdbeere:0xe68a9f, Pistazie:0x9dbb7a, Keine:null };
 
-  function makeTexture(base, speckles, seed = 1) {
-    const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 256;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = base;
-    ctx.fillRect(0, 0, 256, 256);
-    const rnd = random(seed);
-    for (let i = 0; i < 1800; i++) {
-      const a = 0.025 + rnd() * 0.08;
-      const shade = speckles[Math.floor(rnd() * speckles.length)];
-      ctx.fillStyle = shade.replace('ALPHA', a.toFixed(3));
-      const s = 0.6 + rnd() * 2.3;
-      ctx.fillRect(rnd() * 256, rnd() * 256, s, s);
-    }
-    const tex = new THREE.CanvasTexture(c);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(2.5, 1.4);
-    tex.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
-    return tex;
-  }
-
-  function makeBump(seed = 11) {
-    const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 256;
-    const ctx = c.getContext('2d');
-    const image = ctx.createImageData(256, 256);
-    const rnd = random(seed);
-    for (let i = 0; i < image.data.length; i += 4) {
-      const v = 118 + Math.floor(rnd() * 35);
-      image.data[i] = v;
-      image.data[i + 1] = v;
-      image.data[i + 2] = v;
-      image.data[i + 3] = 255;
-    }
-    ctx.putImageData(image, 0, 0);
-    const tex = new THREE.CanvasTexture(c);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(3, 2);
-    return tex;
-  }
-
-  const textures = {
-    vanilla: makeTexture('#d8a866', ['rgba(88,52,20,ALPHA)', 'rgba(255,235,185,ALPHA)'], 1),
-    chocolate: makeTexture('#5f321f', ['rgba(35,14,7,ALPHA)', 'rgba(210,154,98,ALPHA)'], 2),
-    lemon: makeTexture('#d7b64f', ['rgba(126,91,15,ALPHA)', 'rgba(255,246,167,ALPHA)'], 3),
-    redvelvet: makeTexture('#7e2025', ['rgba(50,8,10,ALPHA)', 'rgba(216,93,89,ALPHA)'], 4),
-    marble: makeTexture('#b88760', ['rgba(70,38,20,ALPHA)', 'rgba(247,220,180,ALPHA)'], 5),
-    cream: makeTexture('#f5e7d0', ['rgba(175,145,110,ALPHA)', 'rgba(255,255,255,ALPHA)'], 6),
-    bump: makeBump()
-  };
-
-  const doughMap = {
-    'Vanille': { tex: textures.vanilla, color: 0xe0b774 },
-    'Schokolade': { tex: textures.chocolate, color: 0x633723 },
-    'Zitrone': { tex: textures.lemon, color: 0xd9bb56 },
-    'Red Velvet': { tex: textures.redvelvet, color: 0x86292e },
-    'Marmor': { tex: textures.marble, color: 0xac7c59 }
-  };
-
-  const fillingColors = {
-    'Buttercreme': 0xffeed6,
-    'Erdbeere': 0xf28ba5,
-    'Schokolade': 0x6a3825,
-    'Zitrone': 0xf6dc78,
-    'Pistazie': 0x9fbd7a
-  };
-
-  const glazeColors = {
-    'Vanille': 0xfff2d7,
-    'Schokolade': 0x5c3022,
-    'Erdbeere': 0xf49ab1,
-    'Pistazie': 0xa8c887,
-    'Keine': null
-  };
-
-  function disposeObject(object) {
-    object.traverse(child => {
-      if (child.geometry) child.geometry.dispose();
-      if (child.material) {
-        const materials = Array.isArray(child.material) ? child.material : [child.material];
-        materials.forEach(mat => {
-          if (mat.map && !Object.values(textures).includes(mat.map)) mat.map.dispose();
-          mat.dispose();
-        });
+    function irregularCylinder(radius, height, seed, segments=128) {
+      const geo = new THREE.CylinderGeometry(radius, radius*.998, height, segments, 10, false);
+      const pos = geo.attributes.position; const rnd = random(seed); const offsets = new Map();
+      for (let i=0;i<pos.count;i++) {
+        const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i); const r=Math.hypot(x,z); if(r < radius*.7) continue;
+        const key=Math.round(Math.atan2(z,x)*segments/(Math.PI*2));
+        if(!offsets.has(key)) offsets.set(key, (rnd()-.5)*.032);
+        const wobble=offsets.get(key)+Math.sin(y*12+key*.7)*.006;
+        const nr=Math.max(.01,r+wobble); pos.setX(i,x/r*nr); pos.setZ(i,z/r*nr);
       }
-    });
-  }
-
-  function shadow(mesh) {
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    return mesh;
-  }
-
-  function addCrumbPores(group, radius, y, height, color, seed) {
-    const rnd = random(seed);
-    const poreMat = new THREE.MeshStandardMaterial({ color, roughness: 1 });
-    const poreGeo = new THREE.SphereGeometry(0.012, 6, 5);
-    const count = 95;
-    for (let i = 0; i < count; i++) {
-      const a = rnd() * Math.PI * 2;
-      const yy = y - height / 2 + 0.08 + rnd() * (height - 0.16);
-      const r = radius + 0.004;
-      const pore = new THREE.Mesh(poreGeo, poreMat);
-      pore.position.set(Math.cos(a) * r, yy, Math.sin(a) * r);
-      const scale = 0.45 + rnd() * 1.25;
-      pore.scale.set(scale * 1.25, scale, scale * 0.55);
-      group.add(pore);
+      pos.needsUpdate=true; geo.computeVertexNormals(); return geo;
     }
-  }
 
-  function makeCakeLayer(radius, height, y, flavor, seed) {
-    const spec = doughMap[flavor] || doughMap.Vanille;
-    const mat = new THREE.MeshStandardMaterial({
-      color: spec.color,
-      map: spec.tex,
-      bumpMap: textures.bump,
-      bumpScale: 0.018,
-      roughness: 0.78,
-      metalness: 0
-    });
-    const mesh = shadow(new THREE.Mesh(new THREE.CylinderGeometry(radius, radius * 0.992, height, 96, 4), mat));
-    mesh.position.y = y;
-    cakeGroup.add(mesh);
-    addCrumbPores(cakeGroup, radius, y, height, 0x7b583a, seed);
-
-    const topCrumb = new THREE.Mesh(
-      new THREE.CylinderGeometry(radius * 0.97, radius * 0.97, 0.018, 96),
-      new THREE.MeshStandardMaterial({ color: spec.color, map: spec.tex, roughness: 0.84, bumpMap: textures.bump, bumpScale: 0.014 })
-    );
-    topCrumb.position.y = y + height / 2 + 0.009;
-    cakeGroup.add(topCrumb);
-  }
-
-  function addFilling(radius, y, flavor) {
-    const color = fillingColors[flavor] || fillingColors.Buttercreme;
-    const cream = shadow(new THREE.Mesh(
-      new THREE.CylinderGeometry(radius * 1.018, radius * 1.018, 0.19, 96),
-      new THREE.MeshPhysicalMaterial({
-        color,
-        roughness: flavor === 'Schokolade' ? 0.46 : 0.62,
-        sheen: 0.35,
-        sheenRoughness: 0.7,
-        clearcoat: flavor === 'Schokolade' ? 0.18 : 0.06,
-        bumpMap: textures.bump,
-        bumpScale: 0.007
-      })
-    ));
-    cream.position.y = y;
-    cakeGroup.add(cream);
-
-    const rnd = random(Math.floor(y * 1000) + flavor.length);
-    for (let i = 0; i < 18; i++) {
-      const a = rnd() * Math.PI * 2;
-      const dollop = new THREE.Mesh(
-        new THREE.SphereGeometry(0.055 + rnd() * 0.035, 10, 8),
-        cream.material
-      );
-      dollop.scale.y = 0.55;
-      dollop.position.set(Math.cos(a) * radius * 1.01, y + (rnd() - 0.5) * 0.08, Math.sin(a) * radius * 1.01);
-      cakeGroup.add(dollop);
+    function makeSponge(radius, height, y, flavor, seed) {
+      const mat = new THREE.MeshStandardMaterial({ color:doughColor[flavor]||doughColor.Vanille, map:doughTex[flavor]||textures.vanilla, roughnessMap:textures.crumbRough, roughness:.92, metalness:0 });
+      const sponge = shadow(new THREE.Mesh(irregularCylinder(radius,height,seed),mat)); sponge.position.y=y; cakeGroup.add(sponge);
+      const rnd=random(seed+800); const poreMat=new THREE.MeshStandardMaterial({color:0x6b4529,roughness:1}); const poreGeo=new THREE.SphereGeometry(.012,6,5);
+      for(let i=0;i<125;i++){const a=rnd()*Math.PI*2;const yy=y-height/2+.05+rnd()*(height-.1);const p=new THREE.Mesh(poreGeo,poreMat);p.position.set(Math.cos(a)*(radius+.006),yy,Math.sin(a)*(radius+.006));const s=.45+rnd()*1.45;p.scale.set(s*1.4,s,s*.5);cakeGroup.add(p);}
+      const crust = new THREE.Mesh(new THREE.TorusGeometry(radius*.965,.023,8,128),new THREE.MeshStandardMaterial({color:0xa96c32,roughness:.95})); crust.rotation.x=Math.PI/2; crust.position.y=y+height/2-.015; cakeGroup.add(crust);
     }
-  }
 
-  function addGlaze(radius, topY, flavor) {
-    const color = glazeColors[flavor];
-    if (!color) return;
-    const mat = new THREE.MeshPhysicalMaterial({
-      color,
-      roughness: flavor === 'Schokolade' ? 0.22 : 0.3,
-      metalness: 0,
-      clearcoat: 0.78,
-      clearcoatRoughness: 0.18,
-      sheen: 0.28,
-      sheenRoughness: 0.45
-    });
-    const top = shadow(new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.025, radius * 1.025, 0.105, 96), mat));
-    top.position.y = topY + 0.045;
-    cakeGroup.add(top);
-
-    const rnd = random(flavor.length * 31 + Math.round(radius * 100));
-    const count = 18;
-    for (let i = 0; i < count; i++) {
-      const a = (i / count) * Math.PI * 2 + rnd() * 0.16;
-      const len = 0.1 + rnd() * 0.36;
-      const drip = shadow(new THREE.Mesh(new THREE.CapsuleGeometry(0.035 + rnd() * 0.025, len, 6, 10), mat));
-      drip.position.set(Math.cos(a) * radius * 1.024, topY - len / 2 + 0.025, Math.sin(a) * radius * 1.024);
-      cakeGroup.add(drip);
+    function addFilling(radius,y,flavor){
+      const mat=new THREE.MeshPhysicalMaterial({color:fillingColor[flavor]||0xf2e2c7,roughness:flavor==='Schokolade'?.4:.66,sheen:.22,sheenRoughness:.6,clearcoat:flavor==='Schokolade'?.14:.02});
+      const cream=shadow(new THREE.Mesh(irregularCylinder(radius*1.015,.18,320+Math.round(y*100)),mat));cream.position.y=y;cakeGroup.add(cream);
+      const rnd=random(900+Math.round(y*200));
+      for(let i=0;i<24;i++){const a=i/24*Math.PI*2+(rnd()-.5)*.08;const blob=new THREE.Mesh(new THREE.SphereGeometry(.052+rnd()*.025,10,7),mat);blob.scale.set(1.25,.55,.75);blob.position.set(Math.cos(a)*radius*1.014,y+(rnd()-.5)*.055,Math.sin(a)*radius*1.014);cakeGroup.add(blob);}
+      if(flavor==='Erdbeere') for(let i=0;i<12;i++){const a=(i/12)*Math.PI*2+.1;const jam=new THREE.Mesh(new THREE.SphereGeometry(.032,10,8),new THREE.MeshPhysicalMaterial({color:0xa91e37,roughness:.32,clearcoat:.38}));jam.position.set(Math.cos(a)*radius*1.026,y+(i%3-1)*.025,Math.sin(a)*radius*1.026);cakeGroup.add(jam);}
     }
-  }
 
-  function addBerry(x, y, z, scale, color = 0xb51f41) {
-    const berryMat = new THREE.MeshPhysicalMaterial({ color, roughness: 0.34, clearcoat: 0.48, clearcoatRoughness: 0.2 });
-    const berry = shadow(new THREE.Mesh(new THREE.SphereGeometry(0.105 * scale, 22, 16), berryMat));
-    berry.scale.y = 0.9;
-    berry.position.set(x, y, z);
-    cakeGroup.add(berry);
-    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.055 * scale, 0.065 * scale, 6), new THREE.MeshStandardMaterial({ color: 0x3f6b37, roughness: 0.8 }));
-    cap.position.set(x, y + 0.105 * scale, z);
-    cap.rotation.x = Math.PI;
-    cakeGroup.add(cap);
-  }
-
-  function addFlower(x, y, z, scale, color) {
-    const petalMat = new THREE.MeshPhysicalMaterial({ color, roughness: 0.55, sheen: 0.6, sheenRoughness: 0.45, side: THREE.DoubleSide });
-    for (let p = 0; p < 7; p++) {
-      const a = p * Math.PI * 2 / 7;
-      const petal = new THREE.Mesh(new THREE.SphereGeometry(0.095 * scale, 16, 10), petalMat);
-      petal.scale.set(1.45, 0.27, 0.72);
-      petal.rotation.y = -a;
-      petal.rotation.z = 0.24;
-      petal.position.set(x + Math.cos(a) * 0.105 * scale, y, z + Math.sin(a) * 0.105 * scale);
-      petal.castShadow = true;
-      cakeGroup.add(petal);
-    }
-    const center = new THREE.Mesh(new THREE.SphereGeometry(0.055 * scale, 14, 10), new THREE.MeshPhysicalMaterial({ color: 0xe4ad39, roughness: 0.55 }));
-    center.position.set(x, y + 0.025, z);
-    cakeGroup.add(center);
-  }
-
-  function addSprinkles(radius, topY) {
-    const colors = [0xe95b7a, 0x57aaa5, 0xf0ba3f, 0x9067b5, 0xf3f0e7];
-    const geo = new THREE.CapsuleGeometry(0.018, 0.07, 3, 6);
-    const rnd = random(888);
-    for (let i = 0; i < 58; i++) {
-      const a = rnd() * Math.PI * 2;
-      const r = radius * Math.sqrt(rnd()) * 0.88;
-      const s = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: colors[i % colors.length], roughness: 0.52 }));
-      s.position.set(Math.cos(a) * r, topY + 0.12 + rnd() * 0.02, Math.sin(a) * r);
-      s.rotation.set(rnd() * Math.PI, rnd() * Math.PI, rnd() * Math.PI);
-      s.castShadow = true;
-      cakeGroup.add(s);
-    }
-  }
-
-  function addCandles(radius, topY) {
-    const colors = [0xe86e88, 0x6eb5b2, 0xe9bd52];
-    [-0.28, 0, 0.28].forEach((x, i) => {
-      const candle = shadow(new THREE.Mesh(
-        new THREE.CylinderGeometry(0.035, 0.035, 0.54, 16),
-        new THREE.MeshStandardMaterial({ color: colors[i], roughness: 0.55 })
-      ));
-      candle.position.set(x * radius, topY + 0.34, 0.02);
-      cakeGroup.add(candle);
-      const flame = new THREE.Mesh(
-        new THREE.SphereGeometry(0.052, 14, 10),
-        new THREE.MeshBasicMaterial({ color: 0xffa72c })
-      );
-      flame.scale.y = 1.65;
-      flame.position.set(x * radius, topY + 0.68, 0.02);
-      cakeGroup.add(flame);
-      const glow = new THREE.PointLight(0xff9e35, 0.8, 1.2, 2);
-      glow.position.copy(flame.position);
-      cakeGroup.add(glow);
-    });
-  }
-
-  function rebuild(config) {
-    currentConfig = config;
-    cakeRoot.remove(cakeGroup);
-    disposeObject(cakeGroup);
-    cakeGroup = new THREE.Group();
-    cakeRoot.add(cakeGroup);
-
-    const sizeScale = config.size === 'Groß' ? 1.16 : config.size === 'Mittel' ? 1.05 : 0.93;
-    const radius = 1.76 * sizeScale;
-    const layerHeight = 0.66;
-    const fillingHeight = 0.19;
-    let y = 0.16 + layerHeight / 2;
-
-    config.layers.forEach((flavor, index) => {
-      makeCakeLayer(radius, layerHeight, y, flavor, 100 + index * 17);
-      y += layerHeight / 2;
-      if (index < config.layers.length - 1) {
-        y += fillingHeight / 2;
-        addFilling(radius, y, config.fillings[index] || 'Buttercreme');
-        y += fillingHeight / 2 + layerHeight / 2;
+    function addSemiNakedFinish(radius,bottomY,topY,flavor){
+      if(flavor==='Keine') return;
+      const color=glazeColor[flavor]||0xeadbc8; const height=topY-bottomY;
+      const mat=new THREE.MeshPhysicalMaterial({color,transparent:true,opacity:flavor==='Vanille'?.86:.96,roughness:flavor==='Schokolade'?.3:.58,roughnessMap:textures.creamRough,clearcoat:flavor==='Schokolade'?.34:.06,clearcoatRoughness:.3,sheen:.22});
+      const shell=shadow(new THREE.Mesh(irregularCylinder(radius*1.025,height,771),mat)); shell.position.y=bottomY+height/2; cakeGroup.add(shell);
+      if(flavor==='Vanille') {
+        const scrapeMat=new THREE.MeshStandardMaterial({color:0xf5eadb,roughness:.72,transparent:true,opacity:.5}); const rnd=random(72);
+        for(let i=0;i<34;i++){const a=rnd()*Math.PI*2;const h=.08+rnd()*.3;const mark=new THREE.Mesh(new THREE.BoxGeometry(.012,h,.035),scrapeMat);mark.position.set(Math.cos(a)*radius*1.036,bottomY+.12+rnd()*(height-.22),Math.sin(a)*radius*1.036);mark.rotation.y=-a;cakeGroup.add(mark);}
       }
-    });
-
-    const topY = y;
-    addGlaze(radius, topY, config.glaze);
-    const decorY = topY + (config.glaze === 'Keine' ? 0.08 : 0.13);
-
-    if (config.decorations.includes('Frische Beeren')) {
-      const positions = [
-        [-0.62, 0.03], [-0.3, -0.38], [0.06, -0.12], [0.42, -0.4], [0.64, 0.08], [0.2, 0.45], [-0.28, 0.42]
-      ];
-      positions.forEach((p, i) => addBerry(p[0] * radius, decorY + 0.1, p[1] * radius, i % 3 === 0 ? 1.14 : 0.94, i % 2 ? 0x9d1738 : 0xcf2e4e));
     }
-    if (config.decorations.includes('Blumen')) {
-      addFlower(-0.48 * radius, decorY + 0.08, 0.05 * radius, 1.1, 0xffe5ec);
-      addFlower(0.18 * radius, decorY + 0.09, 0.32 * radius, 0.95, 0xf49ab3);
-      addFlower(0.48 * radius, decorY + 0.08, -0.16 * radius, 0.82, 0xfff3f6);
+
+    function addTopFrosting(radius,topY,flavor){
+      if(flavor==='Keine') return;
+      const color=glazeColor[flavor]; const mat=new THREE.MeshPhysicalMaterial({color,roughness:flavor==='Schokolade'?.24:.5,roughnessMap:flavor==='Vanille'?textures.creamRough:null,clearcoat:flavor==='Schokolade'?.5:.08,clearcoatRoughness:.2,sheen:.3});
+      const top=shadow(new THREE.Mesh(irregularCylinder(radius*1.025,.12,512),mat));top.position.y=topY+.05;cakeGroup.add(top);
+      const rnd=random(514);for(let i=0;i<16;i++){const a=i/16*Math.PI*2+(rnd()-.5)*.08;const len=.08+rnd()*.25;const drip=shadow(new THREE.Mesh(new THREE.CapsuleGeometry(.027+rnd()*.018,len,5,8),mat));drip.position.set(Math.cos(a)*radius*1.027,topY-len/2+.02,Math.sin(a)*radius*1.027);cakeGroup.add(drip);}
     }
-    if (config.decorations.includes('Streusel')) addSprinkles(radius, topY);
-    if (config.decorations.includes('Kerzen')) addCandles(radius, topY);
 
-    const targetHeight = topY + 0.45;
-    camera.lookAt(0, Math.max(1.35, targetHeight * 0.52), 0);
-  }
-
-  function resize() {
-    const rect = canvas.getBoundingClientRect();
-    const width = Math.max(1, Math.floor(rect.width));
-    const height = Math.max(1, Math.floor(rect.height));
-    if (canvas.width !== Math.floor(width * renderer.getPixelRatio()) || canvas.height !== Math.floor(height * renderer.getPixelRatio())) {
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+    function strawberry(x,y,z,scale=1,rot=0){
+      const pts=[];for(let i=0;i<=18;i++){const t=i/18;const yy=-.15+t*.3;const rr=.02+Math.sin(t*Math.PI)*.115*(.85+.15*(1-t));pts.push(new THREE.Vector2(rr,yy));}
+      const body=shadow(new THREE.Mesh(new THREE.LatheGeometry(pts,28),new THREE.MeshPhysicalMaterial({color:0xd93243,roughness:.34,clearcoat:.28,clearcoatRoughness:.2})));body.position.set(x,y,z);body.scale.setScalar(scale);body.rotation.z=Math.PI;body.rotation.y=rot;cakeGroup.add(body);
+      const seedMat=new THREE.MeshStandardMaterial({color:0xf0c77f,roughness:.75}); const seedGeo=new THREE.SphereGeometry(.009,6,5);
+      for(let i=0;i<18;i++){const a=(i%6)/6*Math.PI*2+((i/6)|0)*.32;const h=-.06+((i/6)|0)*.055;const r=.095*(1-Math.abs(h)/.2);const s=new THREE.Mesh(seedGeo,seedMat);s.position.set(x+Math.cos(a)*r*scale,y-h*scale,z+Math.sin(a)*r*scale);cakeGroup.add(s);}
+      const leafMat=new THREE.MeshStandardMaterial({color:0x3f6d36,roughness:.82,side:THREE.DoubleSide});for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(.055*scale,.12*scale,3),leafMat);leaf.position.set(x,y+.145*scale,z);leaf.rotation.z=Math.PI/2;leaf.rotation.y=i*Math.PI*2/5;cakeGroup.add(leaf);}
     }
-  }
 
-  let dragging = false;
-  let lastX = 0;
-  let lastY = 0;
-  let tilt = -0.08;
+    function blueberry(x,y,z,scale=1){const mat=new THREE.MeshPhysicalMaterial({color:0x334a78,roughness:.48,clearcoat:.18});const b=shadow(new THREE.Mesh(new THREE.SphereGeometry(.085*scale,20,14),mat));b.position.set(x,y,z);b.scale.y=.92;cakeGroup.add(b);const crown=new THREE.Mesh(new THREE.TorusGeometry(.026*scale,.008*scale,6,8),new THREE.MeshStandardMaterial({color:0x273650,roughness:.85}));crown.rotation.x=Math.PI/2;crown.position.set(x,y+.077*scale,z);cakeGroup.add(crown);}
+    function raspberry(x,y,z,scale=1){const mat=new THREE.MeshPhysicalMaterial({color:0xc51f45,roughness:.46,clearcoat:.12});for(let r=0;r<4;r++)for(let i=0;i<8-r;i++){const a=i/(8-r)*Math.PI*2;const rr=.055*(1-r*.13);const bead=new THREE.Mesh(new THREE.SphereGeometry(.026*scale,10,8),mat);bead.position.set(x+Math.cos(a)*rr*scale,y+(r-.8)*.034*scale,z+Math.sin(a)*rr*scale);bead.castShadow=true;cakeGroup.add(bead);}}
 
-  canvas.addEventListener('pointerdown', event => {
-    dragging = true;
-    lastX = event.clientX;
-    lastY = event.clientY;
-    canvas.setPointerCapture(event.pointerId);
+    function creamDollop(x,y,z,scale=1){const pts=[];for(let i=0;i<=16;i++){const t=i/16;const rr=.12*Math.sin(Math.PI*t)*(.7+.3*Math.cos(t*Math.PI*5));pts.push(new THREE.Vector2(Math.max(.006,rr),t*.22));}const m=new THREE.Mesh(new THREE.LatheGeometry(pts,24),new THREE.MeshPhysicalMaterial({color:0xf0e3d1,roughness:.6,sheen:.25}));m.position.set(x,y,z);m.scale.setScalar(scale);m.castShadow=true;cakeGroup.add(m);}
+
+    function addBerryArrangement(radius,topY){
+      const p=[[-.55,.05,1.08],[-.28,-.31,.95],[.02,-.08,1.16],[.32,-.31,.92],[.54,.03,1.04],[.18,.35,.9],[-.28,.36,.92]];
+      p.forEach((v,i)=>{if(i<4) strawberry(v[0]*radius,topY+.22,v[1]*radius,v[2],i*.7);else if(i%2) raspberry(v[0]*radius,topY+.2,v[1]*radius,1.05);else blueberry(v[0]*radius,topY+.18,v[1]*radius,1.05);});
+      creamDollop(-.08*radius,topY+.12,.26*radius,1.05);creamDollop(.38*radius,topY+.12,.18*radius,.92);creamDollop(-.42*radius,topY+.12,-.17*radius,.9);
+    }
+
+    function addFlowers(radius,topY){const colors=[0xf7d9df,0xeeb2c0,0xffeee8];for(let j=0;j<3;j++){const x=(-.42+j*.42)*radius,z=(j===1?.3:-.04)*radius;const mat=new THREE.MeshPhysicalMaterial({color:colors[j],roughness:.57,sheen:.42,side:THREE.DoubleSide});for(let i=0;i<7;i++){const a=i/7*Math.PI*2;const petal=new THREE.Mesh(new THREE.SphereGeometry(.085,14,8),mat);petal.scale.set(1.5,.24,.72);petal.position.set(x+Math.cos(a)*.09,topY+.18,z+Math.sin(a)*.09);petal.rotation.y=-a;cakeGroup.add(petal);}}}
+    function addSprinkles(radius,topY){const cols=[0xe75574,0x5da8a2,0xe8b43c,0x8c67ab];const rnd=random(1002);for(let i=0;i<60;i++){const a=rnd()*Math.PI*2,r=radius*Math.sqrt(rnd())*.82;const s=new THREE.Mesh(new THREE.CapsuleGeometry(.015,.055,3,5),new THREE.MeshStandardMaterial({color:cols[i%cols.length],roughness:.55}));s.position.set(Math.cos(a)*r,topY+.15,Math.sin(a)*r);s.rotation.set(rnd()*Math.PI,rnd()*Math.PI,rnd()*Math.PI);cakeGroup.add(s);}}
+    function addCandles(radius,topY){[-.25,0,.25].forEach((x,i)=>{const c=shadow(new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.48,16),new THREE.MeshStandardMaterial({color:[0xe76f88,0x6fb3af,0xe7b850][i],roughness:.55})));c.position.set(x*radius,topY+.38,.02);cakeGroup.add(c);const f=new THREE.Mesh(new THREE.SphereGeometry(.045,12,8),new THREE.MeshBasicMaterial({color:0xffaa30}));f.scale.y=1.7;f.position.set(x*radius,topY+.66,.02);cakeGroup.add(f);});}
+
+    function ingredientPanel(config){
+      if(!window.CakeCatalog?.ingredientTotals) return;
+      let panel=document.getElementById('ingredientPreview');
+      if(!panel){panel=document.createElement('details');panel.id='ingredientPreview';panel.style.cssText='margin-top:16px;padding:12px;border:1px solid #eadde2;border-radius:12px;background:#fff9fb;font-size:.88rem';panel.innerHTML='<summary style="cursor:pointer;font-weight:800;color:#8e3152">Backdaten & Zutaten</summary><p class="small" style="margin:8px 0">Die Werte sind derzeit Planungswerte und können später durch echte Rezepte ersetzt werden.</p><ul id="ingredientList" style="columns:2;padding-left:18px;margin:0"></ul>';document.querySelector('.config-summary')?.appendChild(panel);}
+      const rows=window.CakeCatalog.ingredientTotals(config);const list=document.getElementById('ingredientList');if(list)list.innerHTML=rows.map(r=>`<li>${r.name}: ${r.amount} ${r.unit}</li>`).join('');
+    }
+
+    function addPresetButton(){
+      if(document.getElementById('photoPreset')) return;
+      const controls=document.querySelector('.view-controls'); if(!controls) return;
+      const b=document.createElement('button');b.id='photoPreset';b.type='button';b.textContent='📷 Foto-Referenz';b.title='Vanille, 3 Schichten, Erdbeerfüllung, Vanillecreme und frische Beeren';controls.appendChild(b);
+      b.addEventListener('click',()=>{
+        while(document.querySelectorAll('[data-layer]').length<3) document.getElementById('addLayer')?.click();
+        setTimeout(()=>{
+          document.querySelectorAll('[data-layer]').forEach(el=>{el.value='Vanille';el.dispatchEvent(new Event('change',{bubbles:true}));});
+          document.querySelectorAll('[data-filling]').forEach(el=>{el.value='Erdbeere';el.dispatchEvent(new Event('change',{bubbles:true}));});
+          const glaze=document.getElementById('glaze');if(glaze){glaze.value='Vanille';glaze.dispatchEvent(new Event('change',{bubbles:true}));}
+          const berry=document.querySelector('input[name="config-decoration"][value="Frische Beeren"]');if(berry){berry.checked=true;berry.dispatchEvent(new Event('change',{bubbles:true}));}
+        },0);
+      });
+    }
+
+    function rebuild(config){
+      currentConfig=config;root.remove(cakeGroup);disposeObject(cakeGroup);cakeGroup=new THREE.Group();root.add(cakeGroup);
+      const catalog=window.CakeCatalog; const sizeScale=catalog?.sizes?.[config.size]?.scale || (config.size==='Groß'?1.16:config.size==='Mittel'?1.05:.93);
+      const radius=1.72*sizeScale, layerH=.58, fillingH=.18; let y=.11+layerH/2; const bottomY=.11;
+      config.layers.forEach((flavor,index)=>{makeSponge(radius*.995,layerH,y,flavor,100+index*37);y+=layerH/2;if(index<config.layers.length-1){y+=fillingH/2;addFilling(radius,y,config.fillings[index]||'Buttercreme');y+=fillingH/2+layerH/2;}});
+      const topY=y;addSemiNakedFinish(radius,bottomY,topY+.03,config.glaze);addTopFrosting(radius,topY,config.glaze);
+      if(config.decorations.includes('Frische Beeren'))addBerryArrangement(radius,topY);
+      if(config.decorations.includes('Blumen'))addFlowers(radius,topY);
+      if(config.decorations.includes('Streusel'))addSprinkles(radius,topY);
+      if(config.decorations.includes('Kerzen'))addCandles(radius,topY);
+      ingredientPanel(config); camera.lookAt(0,Math.max(1.2,(topY+.45)*.48),0);
+    }
+
+    function resize(){const rect=canvas.getBoundingClientRect(),w=Math.max(1,Math.floor(rect.width)),h=Math.max(1,Math.floor(rect.height));if(canvas.width!==Math.floor(w*renderer.getPixelRatio())||canvas.height!==Math.floor(h*renderer.getPixelRatio())){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
+    let dragging=false,lastX=0,lastY=0,tilt=-.055;
+    canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});
+    canvas.addEventListener('pointermove',e=>{if(!dragging)return;root.rotation.y+=(e.clientX-lastX)*.011;tilt=Math.max(-.22,Math.min(.14,tilt+(e.clientY-lastY)*.003));root.rotation.x=tilt;lastX=e.clientX;lastY=e.clientY});
+    canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
+    document.getElementById('rotateLeft')?.addEventListener('click',()=>root.rotation.y-=.35);document.getElementById('rotateRight')?.addEventListener('click',()=>root.rotation.y+=.35);document.getElementById('resetView')?.addEventListener('click',()=>{root.rotation.set(-.055,-.38,0);tilt=-.055});
+    addPresetButton();
+
+    window.Cake3D={update:rebuild,resetView(){root.rotation.set(-.055,-.38,0);tilt=-.055},getComponentData(){return window.CakeCatalog},getCurrentConfig(){return currentConfig}};
+    (function animate(){resize();renderer.render(scene,camera);requestAnimationFrame(animate)})();
   });
-  canvas.addEventListener('pointermove', event => {
-    if (!dragging) return;
-    cakeRoot.rotation.y += (event.clientX - lastX) * 0.012;
-    tilt += (event.clientY - lastY) * 0.004;
-    tilt = Math.max(-0.28, Math.min(0.2, tilt));
-    cakeRoot.rotation.x = tilt;
-    lastX = event.clientX;
-    lastY = event.clientY;
-  });
-  canvas.addEventListener('pointerup', () => { dragging = false; });
-  canvas.addEventListener('pointercancel', () => { dragging = false; });
-
-  document.getElementById('rotateLeft')?.addEventListener('click', () => { cakeRoot.rotation.y -= 0.35; });
-  document.getElementById('rotateRight')?.addEventListener('click', () => { cakeRoot.rotation.y += 0.35; });
-  document.getElementById('resetView')?.addEventListener('click', () => {
-    cakeRoot.rotation.set(-0.08, -0.35, 0);
-    tilt = -0.08;
-  });
-
-  function animate() {
-    resize();
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-  }
-
-  window.Cake3D = {
-    update: rebuild,
-    resetView() {
-      cakeRoot.rotation.set(-0.08, -0.35, 0);
-      tilt = -0.08;
-    }
-  };
-
-  animate();
 })();
