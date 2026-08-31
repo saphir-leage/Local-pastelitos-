@@ -1,6 +1,6 @@
 # Pastelitos
 
-Statische Website mit Tortenkonfigurator. Die vorbereitete modulare 3D-Asset-Architektur ist in [ASSET-PIPELINE.md](ASSET-PIPELINE.md) dokumentiert.
+Photorealistischer Three.js-Tortenkonfigurator mit modularer Asset-Pipeline. Details zur Erstellung und Registrierung neuer Assets stehen in [ASSET-PIPELINE.md](ASSET-PIPELINE.md).
 
 ```sh
 npm test
