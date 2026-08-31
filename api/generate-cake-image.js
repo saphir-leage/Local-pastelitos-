@@ -1,5 +1,3 @@
-import { buildCakeImagePrompt, normalizeCakeImageConfiguration } from '../cake-image-prompt.mjs';
-
 export const config = { runtime: 'nodejs' };
 
 const IMAGE_MODEL = 'gpt-image-2';
@@ -28,6 +26,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
+    // Vercel compiles this function to CommonJS. Load the ESM prompt module dynamically
+    // so the function works both locally and in the Vercel Node.js runtime.
+    const { buildCakeImagePrompt, normalizeCakeImageConfiguration } = await import('../cake-image-prompt.mjs');
+
     const configuration = normalizeCakeImageConfiguration(req.body?.configuration || req.body || {});
     const prompt = buildCakeImagePrompt(configuration);
     const debug = debugPayload(prompt, configuration);
