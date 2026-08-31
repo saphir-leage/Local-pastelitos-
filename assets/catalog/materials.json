@@ -151,8 +151,64 @@
       "label": "Buttercreme",
       "geometryId": "geometry.layer.round",
       "dimensions": { "defaultThicknessCm": 1 },
-      "material": { "baseColor": "#fff0cf" },
-      "rendering": { "roughness": 0.72, "metalness": 0 },
+      "material": { "baseColor": "#fff0cf", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.56, "metalness": 0, "bumpScale": 0.012, "subsurface": 0.08, "proceduralAssetId": "cream.buttercream" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "cream.strawberry", "type": "cream", "label": "Erdbeere", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 1 },
+      "material": { "baseColor": "#e68f9d", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.5, "metalness": 0, "bumpScale": 0.012, "subsurface": 0.08, "proceduralAssetId": "cream.strawberry" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "cream.chocolate", "type": "cream", "label": "Schokolade", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 1 },
+      "material": { "baseColor": "#633729", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.46, "metalness": 0, "bumpScale": 0.012, "subsurface": 0.04, "proceduralAssetId": "cream.chocolate" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "cream.lemon", "type": "cream", "label": "Zitrone", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 1 },
+      "material": { "baseColor": "#ead77d", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.54, "metalness": 0, "bumpScale": 0.012, "subsurface": 0.08, "proceduralAssetId": "cream.lemon" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "cream.pistachio", "type": "cream", "label": "Pistazie", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 1 },
+      "material": { "baseColor": "#a7ba82", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.53, "metalness": 0, "bumpScale": 0.012, "subsurface": 0.07, "proceduralAssetId": "cream.pistachio" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "finish.vanilla", "type": "finish", "label": "Vanille", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 0.3 },
+      "material": { "baseColor": "#f0dfc9", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.5, "metalness": 0, "bumpScale": 0.009, "clearcoat": 0.08, "proceduralAssetId": "finish.vanilla" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "finish.chocolate", "type": "finish", "label": "Schokolade", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 0.3 },
+      "material": { "baseColor": "#4a251c", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.24, "metalness": 0, "bumpScale": 0.009, "clearcoat": 0.34, "proceduralAssetId": "finish.chocolate" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "finish.strawberry", "type": "finish", "label": "Erdbeere", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 0.3 },
+      "material": { "baseColor": "#e58a9c", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.4, "metalness": 0, "bumpScale": 0.009, "clearcoat": 0.16, "proceduralAssetId": "finish.strawberry" },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    },
+    {
+      "id": "finish.pistachio", "type": "finish", "label": "Pistazie", "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 0.3 },
+      "material": { "baseColor": "#a8be86", "baseColorTexture": null, "normalTexture": null, "roughnessTexture": null, "heightTexture": null },
+      "rendering": { "roughness": 0.46, "metalness": 0, "bumpScale": 0.009, "clearcoat": 0.12, "proceduralAssetId": "finish.pistachio" },
       "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
     }
   ]

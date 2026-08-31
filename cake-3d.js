@@ -95,6 +95,9 @@
   const glazeColor = { Keine:null, Vanille:0xf0dfc9, Schokolade:0x5b3427, Erdbeere:0xe58a9c, Pistazie:0xa8be86 };
   const CUT_CENTER = Math.PI * .25;
   const CUT_GAP = Math.PI * .34;
+  const doughAsset = { Vanille:'sponge.vanilla', Schokolade:'sponge.chocolate', Zitrone:'sponge.lemon', 'Red Velvet':'sponge.red-velvet', Marmor:'sponge.marble', Nuss:'sponge.vanilla' };
+  const fillingAsset = { Buttercreme:'cream.buttercream', Erdbeere:'cream.strawberry', Schokolade:'cream.chocolate', Zitrone:'cream.lemon', Pistazie:'cream.pistachio' };
+  const finishAsset = { Vanille:'finish.vanilla', Schokolade:'finish.chocolate', Erdbeere:'finish.strawberry', Pistazie:'finish.pistachio' };
 
   new THREE.TextureLoader().load('assets/strawberry-photo-v1.webp', tex => {
     tex.colorSpace = THREE.SRGBColorSpace;
@@ -153,7 +156,7 @@
   }
 
   function doughMaterial(flavor){
-    const id = flavor==='Schokolade' ? 'dough.chocolate.v2' : 'dough.vanilla.v2';
+    const id = doughAsset[flavor] || doughAsset.Vanille;
     const material = materialFromAsset(id,doughTint[flavor]||0xffffff,'v2');
     if(flavor==='Nuss' && hazelnutTexture){
       material.map = hazelnutTexture;
@@ -165,16 +168,15 @@
   }
 
   function fillingMaterial(flavor){
-    return materialFromAsset('filling.vanilla',fillingTint[flavor]||0xffffff,'v1');
+    return materialFromAsset(fillingAsset[flavor]||fillingAsset.Buttercreme,0xffffff,'v2');
   }
 
   function finishMaterial(flavor){
-    if(flavor==='Schokolade') return materialFromAsset('finish.chocolate.v2',0xffffff,'v2');
-    return new THREE.MeshPhysicalMaterial({color:glazeColor[flavor]||glazeColor.Vanille,roughness:.54,clearcoat:.08,clearcoatRoughness:.38,sheen:.14,transparent:true,opacity:flavor==='Vanille'?.94:.98});
+    return materialFromAsset(finishAsset[flavor]||finishAsset.Vanille,0xffffff,'v2');
   }
 
   function addSponge(radius,height,y,flavor,target=cakeGroup){
-    const base = flavor === 'Schokolade' ? 'dough.chocolate.v2' : 'dough.vanilla.v2';
+    const base = doughAsset[flavor] || doughAsset.Vanille;
     const a = cloneTintedAsset(base, doughTint[flavor] || 0xffffff, 'v2');
     if(flavor==='Nuss' && hazelnutTexture){
       a.traverse(c=>{
@@ -193,7 +195,7 @@
   }
 
   function addFilling(radius,y,flavor,target=cakeGroup){
-    const a = cloneTintedAsset('filling.vanilla', fillingTint[flavor] || 0xffffff);
+    const a = cloneTintedAsset(fillingAsset[flavor]||fillingAsset.Buttercreme, 0xffffff, 'v2');
     a.scale.set(radius/1.7, .56, radius/1.7);
     a.position.y = y;
     target.add(a);
@@ -202,13 +204,6 @@
   function addFinish(radius,bottom,top,flavor,target=cakeGroup){
     if(flavor==='Keine') return;
     const h = top-bottom;
-    if(flavor==='Schokolade' && window.PastelitosAssetsV2){
-      const glaze = cloneTintedAsset('finish.chocolate.v2',0xffffff,'v2');
-      glaze.scale.set(radius/1.72,h,radius/1.72);
-      glaze.position.y = bottom;
-      target.add(glaze);
-      return;
-    }
     const mat = finishMaterial(flavor);
     const shell = new THREE.Mesh(new THREE.CylinderGeometry(radius*1.025,radius*1.02,h,96,8,true),mat);
     shell.position.y = bottom+h/2; shell.castShadow = shell.receiveShadow = true; target.add(shell);
