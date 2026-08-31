@@ -20,6 +20,13 @@
       "id": "decoration.candles", "type": "decoration", "label": "Kerzen",
       "url": "/assets/decorations/candles.glb", "optional": true,
       "placement": { "smartDefault": "accent", "supportedLayouts": ["wreath", "portions", "spiral", "accent"] }
+    },
+    {
+      "id": "decoration.piping", "type": "decoration", "label": "Spritzdekor",
+      "url": null, "optional": false,
+      "variants": ["tufts", "rosettes", "borders"],
+      "surfaces": ["top", "side", "both"],
+      "placement": { "smartDefault": "wreath", "supportedLayouts": ["wreath", "portions", "spiral", "accent"], "combineWith": ["decoration.berries", "decoration.flowers", "decoration.sprinkles"] }
     }
   ]
 }

@@ -58,7 +58,8 @@
       'Frische Beeren': { type: 'decoration', price: 7, ingredients: [{ name: 'Erdbeeren', amount: 125, unit: 'g' }, { name: 'Himbeeren', amount: 65, unit: 'g' }, { name: 'Blaubeeren', amount: 45, unit: 'g' }] },
       Blumen: { type: 'decoration', price: 8, ingredients: [{ name: 'Essbare Blüten', amount: 5, unit: 'Stk.' }] },
       Streusel: { type: 'decoration', price: 4, ingredients: [{ name: 'Zuckerstreusel', amount: 28, unit: 'g' }] },
-      Kerzen: { type: 'decoration', price: 3, ingredients: [{ name: 'Kerzen', amount: 3, unit: 'Stk.' }] }
+      Kerzen: { type: 'decoration', price: 3, ingredients: [{ name: 'Kerzen', amount: 3, unit: 'Stk.' }] },
+      Spritzdekor: { type: 'decoration', assetId: 'decoration.piping', price: 0, ingredients: [] }
     }
   };
 

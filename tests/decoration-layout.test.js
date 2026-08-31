@@ -32,9 +32,24 @@ test('renderer adapts layouts to each decoration family', () => {
 
 test('decoration catalog declares supported placement layouts', () => {
   const catalog = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'catalog', 'decorations.json'), 'utf8'));
-  assert.equal(catalog.assets.length, 4);
+  assert.equal(catalog.assets.length, 5);
   for (const asset of catalog.assets) {
     assert.ok(asset.placement.smartDefault);
     assert.ok(asset.placement.supportedLayouts.length >= 4);
   }
+  const piping = catalog.assets.find(asset => asset.id === 'decoration.piping');
+  assert.deepEqual(piping.variants, ['tufts', 'rosettes', 'borders']);
+  assert.deepEqual(piping.surfaces, ['top', 'side', 'both']);
+});
+
+test('piping decoration is progressive and combinable with berries', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  for (const value of ['tufts', 'rosettes', 'borders', 'top', 'side', 'both']) {
+    assert.match(html, new RegExp(`<option value="${value}"`));
+  }
+  assert.match(html, /id="pipingOptions"[^>]*hidden/);
+  assert.match(html, /decorations\.includes\('Spritzdekor'\)/);
+  const renderer = fs.readFileSync(path.join(root, 'cake-3d.js'), 'utf8');
+  for (const method of ['makePipingMotif', 'addPipingMotif', 'addPiping']) assert.match(renderer, new RegExp(`function ${method}`));
+  assert.match(renderer, /hasBerries/);
 });

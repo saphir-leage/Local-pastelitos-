@@ -233,6 +233,7 @@
     if(asset==='Frische Beeren') return list.length===1?'portions':'accent';
     if(asset==='Blumen') return 'accent';
     if(asset==='Kerzen') return size==='Groß'?'wreath':'accent';
+    if(asset==='Spritzdekor') return list.includes('Frische Beeren')?'portions':'wreath';
     return 'accent';
   }
 
@@ -265,6 +266,51 @@
     const flame=new THREE.Mesh(new THREE.SphereGeometry(.045,10,8),new THREE.MeshBasicMaterial({color:0xf1a52f}));flame.scale.set(.65,1.35,.65);flame.position.set(point.x,topY+.72,point.z);target.add(flame);
   }
 
+  function pipingMaterial(config){
+    const colors={Vanille:0xf5e7d2,Schokolade:0x6a392a,Erdbeere:0xea9aaa,Pistazie:0xb4c68e,Keine:0xf5e7d2};
+    return new THREE.MeshPhysicalMaterial({color:colors[config.glaze]||colors.Vanille,roughness:.48,metalness:0,sheen:.3,sheenRoughness:.64,clearcoat:.035,clearcoatRoughness:.7});
+  }
+
+  function makePipingMotif(style,material){
+    const group=new THREE.Group();
+    if(style==='rosettes'){
+      for(let i=0;i<8;i++){const a=i/8*Math.PI*2,p=new THREE.Mesh(new THREE.SphereGeometry(.085,12,8),material);p.scale.set(1.25,.42,.72);p.position.set(Math.cos(a)*.095,.025,Math.sin(a)*.095);p.rotation.y=a;group.add(p);}
+      const center=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),material);center.scale.y=.6;center.position.y=.045;group.add(center);
+    }else{
+      const profile=[new THREE.Vector2(.018,0),new THREE.Vector2(.12,.018),new THREE.Vector2(.09,.06),new THREE.Vector2(.17,.105),new THREE.Vector2(.11,.15),new THREE.Vector2(.135,.2),new THREE.Vector2(.065,.255),new THREE.Vector2(0,.31)];
+      const tuff=new THREE.Mesh(new THREE.LatheGeometry(profile,18),material);group.add(tuff);
+      for(let i=0;i<8;i++){const ridge=new THREE.Mesh(new THREE.CylinderGeometry(.008,.014,.2,5),material);ridge.position.set(Math.cos(i/8*Math.PI*2)*.105,.11,Math.sin(i/8*Math.PI*2)*.105);ridge.rotation.z=.34;ridge.rotation.y=-i/8*Math.PI*2;group.add(ridge);}
+    }
+    return group;
+  }
+
+  function addPipingMotif(point,y,style,side,radius,material,target){
+    const motif=makePipingMotif(style==='borders'?'tufts':style,material);
+    const scale=style==='borders'?.58:style==='rosettes'?.9:.82;motif.scale.setScalar(scale);
+    if(side){
+      const normal=new THREE.Vector3(point.x,0,point.z).normalize();
+      motif.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal);
+      motif.position.set(normal.x*radius,y,normal.z*radius);
+    }else motif.position.set(point.x,y,point.z);
+    motif.traverse(m=>{if(m.isMesh){m.castShadow=m.receiveShadow=true;}});target.add(motif);
+  }
+
+  function addPiping(radius,topY,config,target,cutaway){
+    const style=config.pipingStyle||'tufts',position=config.pipingPosition||'top',requested=config.decorationLayout||'smart',list=config.decorations||[];
+    const layout=assetLayout(requested,'Spritzdekor',list,config.size),pieces=portionCount(config.size),material=pipingMaterial(config),hasBerries=list.includes('Frische Beeren');
+    if(position==='top'||position==='both'){
+      const topLayout=style==='borders'?'wreath':layout,count=style==='borders'?32:topLayout==='portions'?pieces:topLayout==='wreath'?14:topLayout==='spiral'?12:7;
+      decorationPoints(topLayout,count,radius,cutaway,hasBerries?-.48:-.72).forEach(p=>addPipingMotif(p,topY+.12,style,false,radius,material,target));
+    }
+    if(position==='side'||position==='both'){
+      const sideLayout=style==='borders'?'wreath':layout,count=style==='borders'?36:sideLayout==='portions'?pieces:sideLayout==='wreath'?14:sideLayout==='spiral'?13:7;
+      decorationPoints(sideLayout,count,radius,cutaway,hasBerries?-.44:-.68).forEach((p,i)=>{
+        const sideY=topY-(style==='borders'?.34:sideLayout==='spiral'?.25+(i/count)*.72:.48);
+        addPipingMotif(p,sideY,style,true,radius*1.035,material,target);
+      });
+    }
+  }
+
   function addDecorations(radius,topY,config,target=cakeGroup,cutaway=false){
     const list=config.decorations||[],requested=config.decorationLayout||'smart',pieces=portionCount(config.size);
     if(list.includes('Frische Beeren')){
@@ -284,6 +330,7 @@
       const layout=assetLayout(requested,'Kerzen',list,config.size),count=layout==='portions'?Math.min(pieces,8):layout==='wreath'?8:layout==='spiral'?6:4;
       decorationPoints(layout,count,radius*.78,cutaway,-.25).forEach((p,i)=>addCandle(p,topY,i,target));
     }
+    if(list.includes('Spritzdekor')) addPiping(radius,topY,config,target,cutaway);
   }
 
   function radialFace(radius,height,y,angle,material,target){
