@@ -32,7 +32,13 @@
         { name: 'Mehl', amount: 92, unit: 'g' }, { name: 'Zucker', amount: 80, unit: 'g' },
         { name: 'Butter', amount: 66, unit: 'g' }, { name: 'Ei', amount: 1.35, unit: 'Stk.' },
         { name: 'Milch', amount: 48, unit: 'ml' }, { name: 'Kakao', amount: 9, unit: 'g' }
-      ]}
+      ]},
+      Nuss: {
+        type: 'cake-layer',
+        assetId: 'sponge.hazelnut',
+        price: 0,
+        ingredients: []
+      }
     },
     fillings: {
       Buttercreme: { type: 'filling', price: 0, ingredients: [{ name: 'Butter', amount: 55, unit: 'g' }, { name: 'Puderzucker', amount: 42, unit: 'g' }, { name: 'Milch', amount: 8, unit: 'ml' }] },

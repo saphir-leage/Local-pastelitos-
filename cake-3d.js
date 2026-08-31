@@ -86,10 +86,11 @@
   let pendingConfig = null;
   let assetsReady = false;
   let strawberryTexture = null;
+  let hazelnutTexture = null;
   let viewMode = 'cutaway';
 
   const sizeScale = { Klein: .9, Mittel: 1, Groß: 1.12 };
-  const doughTint = { Vanille:0xffffff, Schokolade:0xffffff, Zitrone:0xf1cf67, 'Red Velvet':0x9d3f48, Marmor:0xbc8f70 };
+  const doughTint = { Vanille:0xffffff, Schokolade:0xffffff, Zitrone:0xf1cf67, 'Red Velvet':0x9d3f48, Marmor:0xbc8f70, Nuss:0xffffff };
   const fillingTint = { Buttercreme:0xffffff, Erdbeere:0xef9ca9, Schokolade:0x704330, Zitrone:0xf1dc87, Pistazie:0xb3c793 };
   const glazeColor = { Keine:null, Vanille:0xf0dfc9, Schokolade:0x5b3427, Erdbeere:0xe58a9c, Pistazie:0xa8be86 };
   const CUT_CENTER = Math.PI * .25;
@@ -99,6 +100,15 @@
     tex.colorSpace = THREE.SRGBColorSpace;
     strawberryTexture = tex;
     if (pendingConfig && assetsReady) build(pendingConfig);
+  });
+
+  new THREE.TextureLoader().load('assets/textures/sponge/hazelnut-basecolor.png', tex => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(2.4, .72);
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    hazelnutTexture = tex;
+    if (pendingConfig && assetsReady && pendingConfig.layers.includes('Nuss')) build(pendingConfig);
   });
 
   function disposeObject(obj){
@@ -144,7 +154,14 @@
 
   function doughMaterial(flavor){
     const id = flavor==='Schokolade' ? 'dough.chocolate.v2' : 'dough.vanilla.v2';
-    return materialFromAsset(id,doughTint[flavor]||0xffffff,'v2');
+    const material = materialFromAsset(id,doughTint[flavor]||0xffffff,'v2');
+    if(flavor==='Nuss' && hazelnutTexture){
+      material.map = hazelnutTexture;
+      material.color.set(0xffffff);
+      material.roughness = .9;
+      material.needsUpdate = true;
+    }
+    return material;
   }
 
   function fillingMaterial(flavor){
@@ -159,6 +176,17 @@
   function addSponge(radius,height,y,flavor,target=cakeGroup){
     const base = flavor === 'Schokolade' ? 'dough.chocolate.v2' : 'dough.vanilla.v2';
     const a = cloneTintedAsset(base, doughTint[flavor] || 0xffffff, 'v2');
+    if(flavor==='Nuss' && hazelnutTexture){
+      a.traverse(c=>{
+        if(c.isMesh && c.material && c.material.map){
+          c.material.map = hazelnutTexture;
+          c.material.color.set(0xffffff);
+          c.material.roughness = .9;
+          c.material.needsUpdate = true;
+        }
+      });
+      a.userData.assetId = 'sponge.hazelnut';
+    }
     a.scale.set(radius/1.65, height/.72, radius/1.65);
     a.position.y = y;
     target.add(a);
