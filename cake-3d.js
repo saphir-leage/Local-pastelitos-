@@ -8,7 +8,7 @@
 
   const modeStyle = document.createElement('style');
   modeStyle.textContent = `
-    .cake-view-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0 8px;padding:5px;background:rgba(255,253,249,.88);border:1px solid var(--pt-line);border-radius:999px;box-shadow:0 8px 24px rgba(66,43,32,.06)}
+    .cake-view-modes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 8px;padding:5px;background:rgba(255,253,249,.88);border:1px solid var(--pt-line);border-radius:999px;box-shadow:0 8px 24px rgba(66,43,32,.06)}
     .cake-view-modes button{border:0;background:transparent;color:var(--pt-muted);border-radius:999px;padding:10px 12px;font:800 .67rem/1 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:.18s}
     .cake-view-modes button:hover{color:var(--pt-accent)}
     .cake-view-modes button.is-active{background:var(--pt-ink);color:#fff;box-shadow:0 6px 16px rgba(42,33,29,.14)}
@@ -394,29 +394,48 @@
     slicePlate.scale.z=.76; slicePlate.position.set(2.95,.02,1.25); slicePlate.castShadow=slicePlate.receiveShadow=true; cakeGroup.add(slicePlate);
 
     const slice=new THREE.Group();
-    const sliceGap=CUT_GAP*.76;
+    const sliceGap=CUT_GAP;
     const sliceStart=CUT_CENTER-sliceGap/2;
     let sy=.10;
     config.layers.forEach((flavor,i)=>{
-      sectorLayer(radius*.83,spongeH,sy+spongeH/2,doughMaterial(flavor),sliceStart,sliceGap,slice);
+      sectorLayer(radius,spongeH,sy+spongeH/2,doughMaterial(flavor),sliceStart,sliceGap,slice);
       sy+=spongeH;
       if(i<config.fillings.length){
-        sectorLayer(radius*.835,fillH,sy+fillH/2,fillingMaterial(config.fillings[i]),sliceStart,sliceGap,slice);
+        sectorLayer(radius*1.006,fillH,sy+fillH/2,fillingMaterial(config.fillings[i]),sliceStart,sliceGap,slice);
         sy+=fillH;
       }
     });
     if(config.glaze!=='Keine'){
       const sm=finishMaterial(config.glaze);
-      sectorShell(radius*.83,sy+.02,(sy+.02)/2,sm,sliceStart,sliceGap,slice);
-      const stop=new THREE.Mesh(new THREE.CylinderGeometry(radius*.85,radius*.84,.085,80,2,false,sliceStart,sliceGap),sm.clone());
+      sectorShell(radius,sy+.02,(sy+.02)/2,sm,sliceStart,sliceGap,slice);
+      const stop=new THREE.Mesh(new THREE.CylinderGeometry(radius*1.025,radius*1.02,.085,80,2,false,sliceStart,sliceGap),sm.clone());
       stop.position.y=sy+.06; slice.add(stop);
     }
     if((config.decorations||[]).includes('Frische Beeren') && (config.decorationLayout==='portions'||config.decorationLayout==='smart')) addStrawberry(Math.sin(CUT_CENTER)*radius*.44,sy+.32,Math.cos(CUT_CENTER)*radius*.44,.24,.2,slice);
-    slice.scale.set(.72,.72,.72);
-    slice.position.set(1.95,.06,.43);
+    slice.position.set(1.95,.10,.43);
     slice.rotation.y=-.12;
     cakeGroup.add(slice);
 
+    return {top:y,radius};
+  }
+
+  function buildSliceOnly(config){
+    const scale=sizeScale[config.size]||1;
+    const radius=1.72*scale,spongeH=.62,fillH=.18,sliceStart=-CUT_GAP/2;
+    let y=.12;
+    config.layers.forEach((flavor,i)=>{
+      sectorLayer(radius,spongeH,y+spongeH/2,doughMaterial(flavor),sliceStart,CUT_GAP,cakeGroup);
+      y+=spongeH;
+      if(i<config.fillings.length){sectorLayer(radius*1.006,fillH,y+fillH/2,fillingMaterial(config.fillings[i]),sliceStart,CUT_GAP,cakeGroup);y+=fillH;}
+    });
+    if(config.glaze!=='Keine'){
+      const mat=finishMaterial(config.glaze);
+      sectorShell(radius,y+.02,(y+.02)/2,mat,sliceStart,CUT_GAP,cakeGroup);
+      const top=new THREE.Mesh(new THREE.CylinderGeometry(radius*1.025,radius*1.02,.085,80,2,false,sliceStart,CUT_GAP),mat.clone());
+      top.position.y=y+.06; top.castShadow=true; cakeGroup.add(top);
+    }
+    if((config.decorations||[]).includes('Frische Beeren')) addStrawberry(0,y+.32,radius*.48,.24,.2,cakeGroup);
+    cakeGroup.rotation.y=-.42;
     return {top:y,radius};
   }
 
@@ -446,6 +465,9 @@
     if(viewMode==='cutaway'){
       root.position.x=-.28; root.scale.setScalar(.83);
       camera.position.set(7.3,4.6,9.4);
+    }else if(viewMode==='slice'){
+      root.scale.setScalar(1.08);
+      camera.position.set(5.3,3.65,7.2);
     }else if(viewMode==='exploded'){
       root.scale.setScalar(.84);
       camera.position.set(6.6,5.0,9.2);
@@ -458,11 +480,11 @@
   function updateModeUI(){
     document.querySelectorAll('[data-cake-view]').forEach(btn=>btn.classList.toggle('is-active',btn.dataset.cakeView===viewMode));
     const status=document.getElementById('viewerStatus');
-    if(status) status.textContent=viewMode==='cutaway'?'Anschnitt · Innenansicht':viewMode==='exploded'?'Explosionsansicht':'Ganze Torte';
+    if(status) status.textContent=viewMode==='cutaway'?'Anschnitt · Innenansicht':viewMode==='slice'?'Tortenstück · Detailansicht':viewMode==='exploded'?'Explosionsansicht':'Ganze Torte';
   }
 
   function setViewMode(mode){
-    if(!['whole','cutaway','exploded'].includes(mode)) return;
+    if(!['whole','cutaway','slice','exploded'].includes(mode)) return;
     viewMode=mode; updateModeUI(); resetView(); if(pendingConfig) build(pendingConfig);
   }
 
@@ -472,7 +494,7 @@
     const modes=document.createElement('div');
     modes.className='cake-view-modes';
     modes.setAttribute('aria-label','Darstellung der Torte');
-    modes.innerHTML='<button type="button" data-cake-view="whole">Ganz</button><button type="button" data-cake-view="cutaway" class="is-active">Mit Anschnitt</button><button type="button" data-cake-view="exploded">Explodiert</button>';
+    modes.innerHTML='<button type="button" data-cake-view="whole">Ganz</button><button type="button" data-cake-view="cutaway" class="is-active">Anschnitt</button><button type="button" data-cake-view="slice">Stück</button><button type="button" data-cake-view="exploded">Schichten</button>';
     controls.insertAdjacentElement('beforebegin',modes);
     modes.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>setViewMode(btn.dataset.cakeView)));
     updateModeUI();
@@ -484,6 +506,7 @@
     clearCake();
     let result;
     if(viewMode==='cutaway') result=buildCutaway(config);
+    else if(viewMode==='slice') result=buildSliceOnly(config);
     else if(viewMode==='exploded') result=buildExploded(config);
     else result=buildWhole(config);
     applyViewFraming(result.top);

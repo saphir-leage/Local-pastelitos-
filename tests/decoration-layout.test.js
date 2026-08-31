@@ -53,3 +53,11 @@ test('piping decoration is progressive and combinable with berries', () => {
   for (const method of ['makePipingMotif', 'addPipingMotif', 'addPiping']) assert.match(renderer, new RegExp(`function ${method}`));
   assert.match(renderer, /hasBerries/);
 });
+
+test('cutaway slice keeps the cake scale and offers a focused slice view', () => {
+  const renderer = fs.readFileSync(path.join(root, 'cake-3d.js'), 'utf8');
+  assert.match(renderer, /function buildSliceOnly/);
+  assert.match(renderer, /data-cake-view="slice"/);
+  assert.match(renderer, /sectorLayer\(radius,spongeH,sy\+spongeH\/2/);
+  assert.doesNotMatch(renderer, /slice\.scale\.set\(\.72/);
+});
