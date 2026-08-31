@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Run tests
+        run: npm test
+
+      - name: Validate asset build
+        run: npm run build
+
+      - name: Upload static website build
+        uses: actions/upload-artifact@v4
+        with:
+          name: pastelitos-static-site
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            index.html
+            privacy.html
+            thankyou.html
+            README.md
+            ASSET-PIPELINE.md
+            assets
+            src
