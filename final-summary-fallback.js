@@ -1,35 +1,116 @@
 (() => {
   'use strict';
+
   function initFinalSummaryFallback(){
-    const nav=document.querySelector('.step-nav'),editor=document.querySelector('.editor-card'),actions=document.querySelector('.editor-actions');
-    if(!nav||!editor||!actions) return;
-    const existingPane=document.querySelector('[data-pane="4"]');
-    if(existingPane) existingPane.remove();
+    const nav=document.querySelector('.step-nav');
+    const editor=document.querySelector('.editor-card');
+    const actions=document.querySelector('.editor-actions');
+    const prevButton=document.getElementById('prevStep');
+    const nextButton=document.getElementById('nextStep');
+    if(!nav||!editor||!actions||!prevButton||!nextButton) return;
+
+    document.querySelector('[data-pane="4"]')?.remove();
     document.querySelectorAll('[data-step="4"]').forEach(el=>el.remove());
     nav.classList.add('has-summary-step');
-    const navButton=document.createElement('button');navButton.type='button';navButton.dataset.step='4';navButton.innerHTML='<b>05</b><span>Ergebnis</span><small>Zusammenfassung</small>';nav.appendChild(navButton);
-    const pane=document.createElement('div');pane.className='step-pane';pane.dataset.pane='4';
+
+    const navButton=document.createElement('button');
+    navButton.type='button';
+    navButton.dataset.step='4';
+    navButton.innerHTML='<b>05</b><span>Ergebnis</span><small>Zusammenfassung</small>';
+    nav.appendChild(navButton);
+
+    const pane=document.createElement('div');
+    pane.className='step-pane';
+    pane.dataset.pane='4';
     pane.innerHTML='<p class="step-kicker">05 · Ergebnis</p><h2>Deine Torte auf einen Blick.</h2><p class="step-copy">Prüfe deine Auswahl. Zutaten und Zubereitung kannst du bei Bedarf aufklappen.</p><div class="final-summary"><div><div class="final-summary-overview"><div class="final-summary-item"><small>Größe</small><strong id="finalSummarySize">–</strong></div><div class="final-summary-item"><small>Aufbau</small><strong id="finalSummaryLayers">–</strong></div><div class="final-summary-item"><small>Cremes</small><strong id="finalSummaryFillings">–</strong></div><div class="final-summary-item"><small>Finish & Deko</small><strong id="finalSummaryFinish">–</strong></div></div><div class="final-details"><details><summary>Zutaten anzeigen</summary><ul id="finalIngredientList"></ul></details><details><summary>Zubereitung anzeigen</summary><ol id="finalPrepList"></ol></details></div></div><div class="final-summary-price"><small>Richtwert</small><output id="finalSummaryPrice">–</output><button type="button" id="finalRequestButton">Torte anfragen</button></div></div><section class="ambience-card"><div class="ambience-copy"><small>KI-Fotostudio</small><h3>Deine konfigurierte Torte als Food-Foto.</h3><p>Das Bild wird ausschließlich aus deiner Konfiguration erzeugt – ohne die 3D-Ansicht als Vorlage.</p><button type="button" id="generateCakePhoto">Fotorealistische Vorschau erstellen</button><span id="aiPhotoStatus" role="status"></span></div><div class="ambience-scene"><img id="aiCakePhoto" alt="KI-generierte fotorealistische Darstellung der konfigurierten Torte" hidden><div id="aiPhotoPlaceholder">Dein KI-Foto erscheint hier.</div></div><p class="ambience-note">KI-generierte Visualisierung · kann in Details von der späteren Torte abweichen</p></section>';
     editor.insertBefore(pane,actions);
-    const style=document.createElement('style');style.textContent=`.step-nav.has-summary-step{grid-template-columns:repeat(5,1fr)}.final-summary{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);gap:26px;align-items:start}.final-summary-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0}.final-summary-item{border:1px solid var(--pt-line);border-radius:12px;padding:14px;background:#fff}.final-summary-item small,.ambience-copy small{display:block;color:var(--pt-muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.final-summary-item strong{font-size:.82rem;line-height:1.35}.final-summary-price{border:1px solid var(--pt-line);border-radius:16px;padding:18px;background:var(--pt-soft)}.final-summary-price output{display:block;font:500 2.35rem/1 Georgia,serif;color:var(--pt-accent);margin:7px 0 14px}.final-summary-price button,.ambience-copy button{border:0;border-radius:999px;background:var(--pt-accent);color:#fff;padding:13px 16px;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.final-summary-price button{width:100%}.ambience-copy button:disabled{opacity:.55}.final-details{margin-top:12px;border-top:1px solid var(--pt-line);padding:14px 0 0}.final-details details{border:1px solid var(--pt-line);border-radius:12px;background:#fff;margin:8px 0;padding:13px 15px}.final-details summary{cursor:pointer;font-weight:800;font-size:.77rem}.final-details ul,.final-details ol{margin:12px 0 0;padding-left:20px;color:var(--pt-muted);font-size:.74rem;line-height:1.55}.ambience-card{margin-top:24px;border:1px solid var(--pt-line);border-radius:18px;background:#fff;padding:18px;overflow:hidden}.ambience-copy h3{margin:2px 0 5px;font:500 1.35rem/1.15 Georgia,serif}.ambience-copy p,.ambience-note,#aiPhotoStatus{color:var(--pt-muted);font-size:.72rem}.ambience-copy button{margin-top:10px}.ambience-copy #aiPhotoStatus{display:inline-block;margin-left:10px}.ambience-scene{min-height:360px;margin-top:15px;border-radius:14px;overflow:hidden;position:relative;background:var(--pt-soft);display:grid;place-items:center}.ambience-scene img{width:100%;height:100%;min-height:360px;object-fit:cover;display:block}.ambience-scene img[hidden]{display:none}#aiPhotoPlaceholder{color:var(--pt-muted);font:500 1.1rem/1.2 Georgia,serif;padding:30px;text-align:center}@media(max-width:760px){.step-nav.has-summary-step button{padding:9px 3px}.step-nav.has-summary-step span{font-size:.54rem}.final-summary{grid-template-columns:1fr}.final-summary-overview{grid-template-columns:1fr}.final-summary-price{order:-1}.ambience-scene,.ambience-scene img{min-height:290px}.ambience-copy #aiPhotoStatus{display:block;margin:8px 0 0}}`;document.head.appendChild(style);
-    function render(){if(typeof update==='function')update();const detail=document.querySelectorAll('#configDetail li');finalSummarySize.textContent=summarySize?.textContent||'–';finalSummaryLayers.textContent=detail[0]?.textContent||'–';finalSummaryFillings.textContent=detail[1]?.textContent||'–';finalSummaryFinish.textContent=[detail[2]?.textContent,detail[3]?.textContent].filter(Boolean).join(' · ')||'–';finalSummaryPrice.textContent=configPrice?.textContent||'–';finalIngredientList.innerHTML=ingredientList?.innerHTML||'';finalPrepList.innerHTML=prepList?.innerHTML||'';}
-    function listText(selector){return [...document.querySelectorAll(selector)].map(el=>el.textContent.trim()).filter(Boolean)}
-    async function generatePhoto(){
-      const button=document.getElementById('generateCakePhoto'),status=document.getElementById('aiPhotoStatus'),image=document.getElementById('aiCakePhoto'),placeholder=document.getElementById('aiPhotoPlaceholder');
-      const detail=[...document.querySelectorAll('#configDetail li')].map(el=>el.textContent.trim());
-      const configuration={size:document.getElementById('summarySize')?.textContent?.trim()||'',layers:detail[0]?[detail[0]]:[],fillings:detail[1]?[detail[1]]:[],finish:detail[2]||'',decorations:detail[3]?[detail[3]]:[],description:`Zutaten: ${listText('#ingredientList li').join('; ')}. Zubereitung: ${listText('#prepList li').join(' ')}`};
-      button.disabled=true;button.textContent='Bild wird erstellt …';status.textContent='Das kann einen Moment dauern.';
-      try{
-        const response=await fetch('/api/generate-cake-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({configuration,imageSize:'1536x1024'})});
-        const data=await response.json().catch(()=>({}));
-        if(!response.ok||!data.image)throw new Error(data.error||`Serverfehler ${response.status}`);
-        image.src=data.image;image.hidden=false;placeholder.hidden=true;status.textContent='Vorschau erstellt.';button.textContent='Bild neu generieren';
-      }catch(error){status.textContent=`Bild konnte nicht erstellt werden: ${error.message}`;button.textContent='Erneut versuchen';}
-      finally{button.disabled=false;}
+
+    const style=document.createElement('style');
+    style.textContent=`.step-nav.has-summary-step{grid-template-columns:repeat(5,1fr)}.final-summary{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);gap:26px;align-items:start}.final-summary-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0}.final-summary-item{border:1px solid var(--pt-line);border-radius:12px;padding:14px;background:#fff}.final-summary-item small,.ambience-copy small{display:block;color:var(--pt-muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.final-summary-item strong{font-size:.82rem;line-height:1.35}.final-summary-price{border:1px solid var(--pt-line);border-radius:16px;padding:18px;background:var(--pt-soft)}.final-summary-price output{display:block;font:500 2.35rem/1 Georgia,serif;color:var(--pt-accent);margin:7px 0 14px}.final-summary-price button,.ambience-copy button{border:0;border-radius:999px;background:var(--pt-accent);color:#fff;padding:13px 16px;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.final-summary-price button{width:100%}.ambience-copy button:disabled{opacity:.55}.final-details{margin-top:12px;border-top:1px solid var(--pt-line);padding:14px 0 0}.final-details details{border:1px solid var(--pt-line);border-radius:12px;background:#fff;margin:8px 0;padding:13px 15px}.final-details summary{cursor:pointer;font-weight:800;font-size:.77rem}.final-details ul,.final-details ol{margin:12px 0 0;padding-left:20px;color:var(--pt-muted);font-size:.74rem;line-height:1.55}.ambience-card{margin-top:24px;border:1px solid var(--pt-line);border-radius:18px;background:#fff;padding:18px;overflow:hidden}.ambience-copy h3{margin:2px 0 5px;font:500 1.35rem/1.15 Georgia,serif}.ambience-copy p,.ambience-note,#aiPhotoStatus{color:var(--pt-muted);font-size:.72rem}.ambience-copy button{margin-top:10px}.ambience-copy #aiPhotoStatus{display:inline-block;margin-left:10px}.ambience-scene{min-height:360px;margin-top:15px;border-radius:14px;overflow:hidden;position:relative;background:var(--pt-soft);display:grid;place-items:center}.ambience-scene img{width:100%;height:100%;min-height:360px;object-fit:cover;display:block}.ambience-scene img[hidden]{display:none}#aiPhotoPlaceholder{color:var(--pt-muted);font:500 1.1rem/1.2 Georgia,serif;padding:30px;text-align:center}@media(max-width:760px){.step-nav.has-summary-step button{padding:9px 3px}.step-nav.has-summary-step span{font-size:.54rem}.final-summary{grid-template-columns:1fr}.final-summary-overview{grid-template-columns:1fr}.final-summary-price{order:-1}.ambience-scene,.ambience-scene img{min-height:290px}.ambience-copy #aiPhotoStatus{display:block;margin:8px 0 0}}`;
+    document.head.appendChild(style);
+
+    function render(){
+      if(typeof update==='function') update();
+      const detail=document.querySelectorAll('#configDetail li');
+      document.getElementById('finalSummarySize').textContent=document.getElementById('summarySize')?.textContent||'–';
+      document.getElementById('finalSummaryLayers').textContent=detail[0]?.textContent||'–';
+      document.getElementById('finalSummaryFillings').textContent=detail[1]?.textContent||'–';
+      document.getElementById('finalSummaryFinish').textContent=[detail[2]?.textContent,detail[3]?.textContent].filter(Boolean).join(' · ')||'–';
+      document.getElementById('finalSummaryPrice').textContent=document.getElementById('configPrice')?.textContent||'–';
+      document.getElementById('finalIngredientList').innerHTML=document.getElementById('ingredientList')?.innerHTML||'';
+      document.getElementById('finalPrepList').innerHTML=document.getElementById('prepList')?.innerHTML||'';
     }
-    setStep=function(n){activeStep=Math.max(0,Math.min(4,n));document.querySelectorAll('[data-pane]').forEach(e=>e.classList.toggle('is-active',+e.dataset.pane===activeStep));document.querySelectorAll('[data-step]').forEach(e=>{e.classList.toggle('is-active',+e.dataset.step===activeStep);e.classList.toggle('is-done',+e.dataset.step<activeStep)});prevStep.disabled=activeStep===0;nextStep.textContent=activeStep===4?'Torte anfragen':'Weiter';if(activeStep===4)render()};
-    document.querySelectorAll('[data-step]').forEach(e=>e.onclick=()=>setStep(+e.dataset.step));prevStep.onclick=()=>setStep(activeStep-1);nextStep.onclick=()=>activeStep===4?openRequest():setStep(activeStep+1);finalRequestButton.onclick=openRequest;document.getElementById('generateCakePhoto').onclick=generatePhoto;setStep(activeStep);
+
+    function currentImageConfiguration(){
+      if(typeof getConfig!=='function') return {shape:'rund',layers:[],fillings:[],finish:'',decorations:[],spongeThicknessCm:3,creamThicknessCm:1,exteriorFinishThicknessMm:3};
+      const c=getConfig();
+      return {
+        size:c.size||'',
+        shape:c.shape||'rund',
+        layers:[...(c.layers||[])],
+        fillings:[...(c.fillings||[])],
+        finish:c.glaze||'',
+        decorations:[...(c.decorations||[])],
+        spongeThicknessCm:3,
+        creamThicknessCm:1,
+        exteriorFinishThicknessMm:3
+      };
+    }
+
+    async function generatePhoto(){
+      const button=document.getElementById('generateCakePhoto');
+      const status=document.getElementById('aiPhotoStatus');
+      const image=document.getElementById('aiCakePhoto');
+      const placeholder=document.getElementById('aiPhotoPlaceholder');
+      button.disabled=true;
+      button.textContent='Bild wird erstellt …';
+      status.textContent='Das kann einen Moment dauern.';
+      try{
+        const response=await fetch('/api/generate-cake-image',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({configuration:currentImageConfiguration()})
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.image) throw new Error(data.error||`Serverfehler ${response.status}`);
+        image.src=data.image;
+        image.hidden=false;
+        placeholder.hidden=true;
+        status.textContent='Vorschau erstellt.';
+        button.textContent='Bild neu generieren';
+      }catch(error){
+        status.textContent=`Bild konnte nicht erstellt werden: ${error.message}`;
+        button.textContent='Erneut versuchen';
+      }finally{
+        button.disabled=false;
+      }
+    }
+
+    setStep=function(n){
+      activeStep=Math.max(0,Math.min(4,n));
+      document.querySelectorAll('[data-pane]').forEach(e=>e.classList.toggle('is-active',+e.dataset.pane===activeStep));
+      document.querySelectorAll('[data-step]').forEach(e=>{
+        e.classList.toggle('is-active',+e.dataset.step===activeStep);
+        e.classList.toggle('is-done',+e.dataset.step<activeStep);
+      });
+      prevButton.disabled=activeStep===0;
+      nextButton.textContent=activeStep===4?'Torte anfragen':'Weiter';
+      if(activeStep===4) render();
+    };
+
+    document.querySelectorAll('[data-step]').forEach(e=>e.onclick=()=>setStep(+e.dataset.step));
+    prevButton.onclick=()=>setStep(activeStep-1);
+    nextButton.onclick=()=>activeStep===4?openRequest():setStep(activeStep+1);
+    document.getElementById('finalRequestButton').onclick=openRequest;
+    document.getElementById('generateCakePhoto').onclick=generatePhoto;
+    setStep(activeStep);
   }
-  const submitFix=document.createElement('script');submitFix.src='form-submit-fix.js?v=20260830-2342';submitFix.async=true;document.head.appendChild(submitFix);
-  if(document.readyState==='complete')initFinalSummaryFallback();else window.addEventListener('load',initFinalSummaryFallback,{once:true});
+
+  const submitFix=document.createElement('script');
+  submitFix.src='form-submit-fix.js?v=20260830-2342';
+  submitFix.async=true;
+  document.head.appendChild(submitFix);
+
+  if(document.readyState==='complete') initFinalSummaryFallback();
+  else window.addEventListener('load',initFinalSummaryFallback,{once:true});
 })();
