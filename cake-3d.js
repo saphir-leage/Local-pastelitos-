@@ -225,23 +225,64 @@
     s.scale.setScalar(scale); s.position.set(x,y,z); s.rotation.y=rot; target.add(s);
   }
 
-  function addDecorations(radius,topY,list,target=cakeGroup,cutaway=false){
+  function portionCount(size){ return size==='Klein'?8:size==='Groß'?16:12; }
+
+  function assetLayout(requested,asset,list,size){
+    if(requested && requested!=='smart') return requested;
+    if(asset==='Streusel') return list.length===1?'scatter':'wreath';
+    if(asset==='Frische Beeren') return list.length===1?'portions':'accent';
+    if(asset==='Blumen') return 'accent';
+    if(asset==='Kerzen') return size==='Groß'?'wreath':'accent';
+    return 'accent';
+  }
+
+  function decorationPoints(layout,count,radius,cutaway=false,phase=-.72){
+    const points=[];
+    for(let i=0;i<count;i++){
+      const t=count===1?.5:i/(count-1),golden=i*2.399963;
+      let angle=phase,rr=radius*.5;
+      if(layout==='wreath'){angle=phase+i/count*Math.PI*2;rr=radius*.76;}
+      else if(layout==='portions'){angle=phase+i/count*Math.PI*2;rr=radius*.72;}
+      else if(layout==='spiral'){angle=phase+i*.88;rr=radius*(.12+.68*t);}
+      else if(layout==='scatter'){angle=phase+golden;rr=radius*(.16+.7*Math.sqrt((i+.5)/count));}
+      else {angle=phase+(i-(count-1)/2)*.3;rr=radius*(.48+(i%3)*.12);}
+      const delta=Math.atan2(Math.sin(angle-CUT_CENTER),Math.cos(angle-CUT_CENTER));
+      if(cutaway && Math.abs(delta)<CUT_GAP*.72) angle+=delta<0?-CUT_GAP:CUT_GAP;
+      points.push({x:Math.sin(angle)*rr,z:Math.cos(angle)*rr,angle,scale:.92+(i%3)*.06});
+    }
+    return points;
+  }
+
+  function addFlower(point,topY,index,target){
+    const colors=[0xe9bfc3,0xf3d8bd,0xd9b9d5],petalMat=new THREE.MeshPhysicalMaterial({color:colors[index%colors.length],roughness:.58,sheen:.15});
+    for(let i=0;i<7;i++){const a=i/7*Math.PI*2,p=new THREE.Mesh(new THREE.SphereGeometry(.11,12,8),petalMat);p.scale.set(1,.32,.58);p.position.set(point.x+Math.cos(a)*.12,topY+.2,point.z+Math.sin(a)*.12);p.rotation.y=a;target.add(p);}
+    const center=new THREE.Mesh(new THREE.SphereGeometry(.055,10,8),new THREE.MeshStandardMaterial({color:0xd5a44a,roughness:.72}));center.position.set(point.x,topY+.235,point.z);target.add(center);
+  }
+
+  function addCandle(point,topY,index,target){
+    const colors=[0xd57682,0xe2b86c,0x899e82,0x8fa8be],mat=new THREE.MeshStandardMaterial({color:colors[index%colors.length],roughness:.5});
+    const candle=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.55,12),mat);candle.position.set(point.x,topY+.4,point.z);target.add(candle);
+    const flame=new THREE.Mesh(new THREE.SphereGeometry(.045,10,8),new THREE.MeshBasicMaterial({color:0xf1a52f}));flame.scale.set(.65,1.35,.65);flame.position.set(point.x,topY+.72,point.z);target.add(flame);
+  }
+
+  function addDecorations(radius,topY,config,target=cakeGroup,cutaway=false){
+    const list=config.decorations||[],requested=config.decorationLayout||'smart',pieces=portionCount(config.size);
     if(list.includes('Frische Beeren')){
-      const positions=cutaway
-        ? [[-.18,0,-.48],[-.62,.03,-.1],[.18,.02,-.55],[-.66,.05,.36],[-.1,.04,.52]]
-        : [[0,0,.42],[-.48,.03,.16],[.43,.02,.12],[-.2,.05,-.34],[.28,.04,-.28]];
-      positions.forEach((p,i)=>addStrawberry(p[0],topY+.25+p[1],p[2],.28+(i%2)*.025,i*.9,target));
+      const layout=assetLayout(requested,'Frische Beeren',list,config.size),count=layout==='portions'?pieces:layout==='wreath'?12:layout==='spiral'?11:7;
+      decorationPoints(layout,count,radius,cutaway).forEach((p,i)=>addStrawberry(p.x,topY+.24,p.z,.24*p.scale,i*.7,target));
     }
     if(list.includes('Streusel')){
-      const mat=new THREE.MeshStandardMaterial({color:0xb94b61,roughness:.55});
-      for(let i=0;i<32;i++){const a=i*2.39,rr=.22+(i%9)/9*radius*.68;const m=new THREE.Mesh(new THREE.CapsuleGeometry(.018,.07,3,5),mat);m.position.set(Math.cos(a)*rr,topY+.14+(i%4)*.008,Math.sin(a)*rr);m.rotation.set(i*.23,a,i*.37);target.add(m);}
-    }
-    if(list.includes('Kerzen')){
-      for(let i=0;i<3;i++){const mat=new THREE.MeshStandardMaterial({color:[0xd57682,0xe2b86c,0x899e82][i],roughness:.5});const c=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.55,12),mat);c.position.set((i-1)*.38,topY+.4,-.18);target.add(c);}
+      const layout=assetLayout(requested,'Streusel',list,config.size),count=layout==='portions'?pieces*3:layout==='spiral'?72:layout==='wreath'?64:layout==='accent'?48:84;
+      const colors=[0xb94b61,0xe2b86c,0x719c91,0x8c6fa6];
+      decorationPoints(layout,count,radius,cutaway,.15).forEach((p,i)=>{const mat=new THREE.MeshStandardMaterial({color:colors[i%colors.length],roughness:.55});const m=new THREE.Mesh(new THREE.CapsuleGeometry(.016,.065,3,5),mat);m.position.set(p.x,topY+.14+(i%4)*.006,p.z);m.rotation.set(i*.23,p.angle,i*.37);target.add(m);});
     }
     if(list.includes('Blumen')){
-      const petalMat=new THREE.MeshPhysicalMaterial({color:0xe9bfc3,roughness:.58,sheen:.15});
-      for(let j=0;j<2;j++){const cx=(j?-.55:.55),cz=-.18;for(let i=0;i<7;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(.12,12,8),petalMat);p.scale.set(1,.35,.6);p.position.set(cx+Math.cos(i/7*Math.PI*2)*.13,topY+.2,cz+Math.sin(i/7*Math.PI*2)*.13);p.rotation.y=i/7*Math.PI*2;target.add(p);}}
+      const layout=assetLayout(requested,'Blumen',list,config.size),count=layout==='wreath'?7:layout==='portions'?Math.min(pieces,8):layout==='spiral'?6:3;
+      decorationPoints(layout,count,radius*.9,cutaway,-1.05).forEach((p,i)=>addFlower(p,topY,i,target));
+    }
+    if(list.includes('Kerzen')){
+      const layout=assetLayout(requested,'Kerzen',list,config.size),count=layout==='portions'?Math.min(pieces,8):layout==='wreath'?8:layout==='spiral'?6:4;
+      decorationPoints(layout,count,radius*.78,cutaway,-.25).forEach((p,i)=>addCandle(p,topY,i,target));
     }
   }
 
@@ -275,7 +316,7 @@
       if(i<config.fillings.length){addFilling(radius,y+fillH/2,config.fillings[i]);y+=fillH;}
     });
     addFinish(radius,base-.02,y+.02,config.glaze);
-    addDecorations(radius,y+.08,config.decorations||[]);
+    addDecorations(radius,y+.08,config);
     return {top:y,radius};
   }
 
@@ -301,7 +342,7 @@
       const top=new THREE.Mesh(new THREE.CylinderGeometry(radius*1.025,radius*1.02,.1,128,3,false,start,length),gm.clone());
       top.position.y=y+.055; top.castShadow=true; cakeGroup.add(top);
     }
-    addDecorations(radius,y+.08,config.decorations||[],cakeGroup,true);
+    addDecorations(radius,y+.08,config,cakeGroup,true);
 
     const slicePlate=new THREE.Mesh(new THREE.CylinderGeometry(1.38,1.44,.07,72),new THREE.MeshPhysicalMaterial({color:0xf7f1e8,roughness:.3,clearcoat:.35,clearcoatRoughness:.25}));
     slicePlate.scale.z=.76; slicePlate.position.set(2.95,.02,1.25); slicePlate.castShadow=slicePlate.receiveShadow=true; cakeGroup.add(slicePlate);
@@ -324,7 +365,7 @@
       const stop=new THREE.Mesh(new THREE.CylinderGeometry(radius*.85,radius*.84,.085,80,2,false,sliceStart,sliceGap),sm.clone());
       stop.position.y=sy+.06; slice.add(stop);
     }
-    if((config.decorations||[]).includes('Frische Beeren')) addStrawberry(Math.sin(CUT_CENTER)*radius*.44,sy+.32,Math.cos(CUT_CENTER)*radius*.44,.24,.2,slice);
+    if((config.decorations||[]).includes('Frische Beeren') && (config.decorationLayout==='portions'||config.decorationLayout==='smart')) addStrawberry(Math.sin(CUT_CENTER)*radius*.44,sy+.32,Math.cos(CUT_CENTER)*radius*.44,.24,.2,slice);
     slice.scale.set(.72,.72,.72);
     slice.position.set(1.95,.06,.43);
     slice.rotation.y=-.12;
@@ -350,7 +391,7 @@
       const cap=new THREE.Mesh(new THREE.CylinderGeometry(radius*1.02,radius*1.02,.16,100),mat);
       cap.position.y=y+.08; cap.castShadow=true; cakeGroup.add(cap); y+=.2+gap*.55;
     }
-    addDecorations(radius,y,config.decorations||[]);
+    addDecorations(radius,y,config);
     return {top:y,radius};
   }
 

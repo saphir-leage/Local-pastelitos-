@@ -1,6 +1,25 @@
 {
   "schemaVersion": 1,
   "assets": [
-    { "id": "decoration.berries", "type": "decoration", "label": "Frische Beeren", "url": "/assets/decorations/berries.glb", "optional": true }
+    {
+      "id": "decoration.berries", "type": "decoration", "label": "Frische Beeren",
+      "url": "/assets/decorations/berries.glb", "optional": true,
+      "placement": { "smartDefault": "portions", "supportedLayouts": ["wreath", "portions", "spiral", "accent"] }
+    },
+    {
+      "id": "decoration.flowers", "type": "decoration", "label": "Essbare Blüten",
+      "url": "/assets/decorations/flowers.glb", "optional": true,
+      "placement": { "smartDefault": "accent", "supportedLayouts": ["wreath", "portions", "spiral", "accent"] }
+    },
+    {
+      "id": "decoration.sprinkles", "type": "decoration", "label": "Streusel",
+      "url": null, "optional": true,
+      "placement": { "smartDefault": "scatter", "supportedLayouts": ["scatter", "wreath", "portions", "spiral", "accent"], "rendering": "instanced" }
+    },
+    {
+      "id": "decoration.candles", "type": "decoration", "label": "Kerzen",
+      "url": "/assets/decorations/candles.glb", "optional": true,
+      "placement": { "smartDefault": "accent", "supportedLayouts": ["wreath", "portions", "spiral", "accent"] }
+    }
   ]
 }
