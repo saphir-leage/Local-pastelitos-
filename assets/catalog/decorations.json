@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    { "id": "decoration.berries", "type": "decoration", "label": "Frische Beeren", "url": "/assets/decorations/berries.glb", "optional": true }
+  ]
+}

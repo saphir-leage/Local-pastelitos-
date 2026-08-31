@@ -1,0 +1,9 @@
+{
+  "name": "pastelitos-configurator",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "build": "node scripts/validate-assets.js"
+  }
+}

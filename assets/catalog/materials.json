@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "id": "sponge.vanilla",
+      "type": "sponge",
+      "label": "Vanille",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 3 },
+      "material": {
+        "baseColor": "#e8c989",
+        "baseColorTexture": null,
+        "normalTexture": null,
+        "roughnessTexture": null,
+        "heightTexture": null
+      },
+      "rendering": {
+        "roughness": 0.9,
+        "metalness": 0,
+        "bumpScale": 0.02,
+        "subsurface": 0.05,
+        "textureRepeatPerCm": 0.25
+      },
+      "recipe": { "ingredients": [] },
+      "allergens": [],
+      "commerce": {}
+    },
+    {
+      "id": "sponge.chocolate",
+      "type": "sponge",
+      "label": "Schokolade",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 3 },
+      "material": {
+        "baseColor": "#75452f",
+        "baseColorTexture": null,
+        "normalTexture": null,
+        "roughnessTexture": null,
+        "heightTexture": null
+      },
+      "rendering": {
+        "roughness": 0.92,
+        "metalness": 0,
+        "bumpScale": 0.02,
+        "subsurface": 0.04,
+        "textureRepeatPerCm": 0.25
+      },
+      "recipe": { "ingredients": [] },
+      "allergens": [],
+      "commerce": {}
+    },
+    {
+      "id": "sponge.lemon",
+      "type": "sponge",
+      "label": "Zitrone",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 3 },
+      "material": {
+        "baseColor": "#efd66d",
+        "baseColorTexture": null,
+        "normalTexture": null,
+        "roughnessTexture": null,
+        "heightTexture": null
+      },
+      "rendering": {
+        "roughness": 0.9,
+        "metalness": 0,
+        "bumpScale": 0.02,
+        "subsurface": 0.05,
+        "textureRepeatPerCm": 0.25
+      },
+      "recipe": { "ingredients": [] },
+      "allergens": [],
+      "commerce": {}
+    },
+    {
+      "id": "sponge.red-velvet",
+      "type": "sponge",
+      "label": "Red Velvet",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 3 },
+      "material": {
+        "baseColor": "#a93e46",
+        "baseColorTexture": null,
+        "normalTexture": null,
+        "roughnessTexture": null,
+        "heightTexture": null
+      },
+      "rendering": {
+        "roughness": 0.91,
+        "metalness": 0,
+        "bumpScale": 0.02,
+        "subsurface": 0.04,
+        "textureRepeatPerCm": 0.25
+      },
+      "recipe": { "ingredients": [] },
+      "allergens": [],
+      "commerce": {}
+    },
+    {
+      "id": "sponge.marble",
+      "type": "sponge",
+      "label": "Marmor",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 3 },
+      "material": {
+        "baseColor": "#b88962",
+        "baseColorTexture": null,
+        "normalTexture": null,
+        "roughnessTexture": null,
+        "heightTexture": null
+      },
+      "rendering": {
+        "roughness": 0.91,
+        "metalness": 0,
+        "bumpScale": 0.02,
+        "subsurface": 0.04,
+        "textureRepeatPerCm": 0.25
+      },
+      "recipe": { "ingredients": [] },
+      "allergens": [],
+      "commerce": {}
+    },
+    {
+      "id": "sponge.hazelnut",
+      "type": "sponge",
+      "label": "Nuss",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 3 },
+      "material": {
+        "baseColor": "#c28b4f",
+        "baseColorTexture": "/assets/textures/sponge/hazelnut-basecolor.png",
+        "normalTexture": null,
+        "roughnessTexture": null,
+        "heightTexture": null
+      },
+      "rendering": {
+        "roughness": 0.9,
+        "metalness": 0,
+        "bumpScale": 0.02,
+        "subsurface": 0.04,
+        "textureRepeatPerCm": 0.25
+      },
+      "recipe": { "ingredients": [] },
+      "allergens": [],
+      "commerce": {}
+    },
+    {
+      "id": "cream.buttercream",
+      "type": "cream",
+      "label": "Buttercreme",
+      "geometryId": "geometry.layer.round",
+      "dimensions": { "defaultThicknessCm": 1 },
+      "material": { "baseColor": "#fff0cf" },
+      "rendering": { "roughness": 0.72, "metalness": 0 },
+      "recipe": { "ingredients": [] }, "allergens": [], "commerce": {}
+    }
+  ]
+}

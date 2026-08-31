@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "id": "geometry.layer.round",
+      "type": "geometry",
+      "shape": "round",
+      "url": "/assets/geometry/cake-round.glb",
+      "sliceGeometryId": "geometry.slice.round",
+      "unitHeightCm": 1,
+      "optional": true
+    },
+    {
+      "id": "geometry.slice.round",
+      "type": "geometry",
+      "shape": "round-slice",
+      "url": "/assets/geometry/cake-slice.glb",
+      "unitHeightCm": 1,
+      "optional": true
+    }
+  ]
+}

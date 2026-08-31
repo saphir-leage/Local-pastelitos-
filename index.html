@@ -319,6 +319,7 @@
     </div>
   </div>
 
+  <script src="src/3d/pastelitos-assets.js"></script>
   <script>
     // Set min date to today
     (function setMinDate() {
@@ -430,6 +431,7 @@
       const ry = rx * (.25 + Math.abs(Math.sin(cakeState.rotation)) * .035);
       const layerHeight = Math.min(48, (height - 105) / cakeState.layers.length);
       const fillingHeight = 9;
+      const cakeStructure = PastelitosAssets.buildCakeStructure(cakeState);
       const totalHeight = cakeState.layers.length * layerHeight + (cakeState.layers.length - 1) * fillingHeight;
       const centerX = width / 2;
       const bottomY = Math.min(height - 54, height / 2 + totalHeight / 2);
@@ -442,27 +444,21 @@
       drawEllipse(centerX, bottomY + 7, rx * 1.13, ry * 1.04, '#ead9d0');
 
       let currentBottom = bottomY;
-      cakeState.layers.forEach((flavor, index) => {
-        const topY = currentBottom - layerHeight;
-        const baseColor = doughs[flavor].color;
+      cakeStructure.layers.forEach(layer => {
+        const isSponge = layer.type === 'sponge';
+        const heightForLayer = isSponge ? layerHeight : fillingHeight;
+        const topY = currentBottom - heightForLayer;
+        const palette = isSponge ? doughs : fillings;
+        const baseColor = palette[layer.label].color;
         const gradient = ctx.createLinearGradient(centerX - rx, 0, centerX + rx, 0);
         gradient.addColorStop(0, shade(baseColor, -30 - sideLight));
         gradient.addColorStop(.45, shade(baseColor, 18));
         gradient.addColorStop(1, shade(baseColor, -22 + sideLight));
         ctx.fillStyle = gradient;
-        ctx.fillRect(centerX - rx, topY, cakeWidth, layerHeight);
+        ctx.fillRect(centerX - rx, topY, cakeWidth, heightForLayer);
         drawEllipse(centerX, currentBottom, rx, ry, shade(baseColor, -18));
         drawEllipse(centerX, topY, rx, ry, shade(baseColor, 15));
         currentBottom = topY;
-
-        if (index < cakeState.fillings.length) {
-          const fillColor = fillings[cakeState.fillings[index]].color;
-          const fillingTop = currentBottom - fillingHeight;
-          ctx.fillStyle = shade(fillColor, -12);
-          ctx.fillRect(centerX - rx, fillingTop, cakeWidth, fillingHeight);
-          drawEllipse(centerX, fillingTop, rx, ry, fillColor);
-          currentBottom = fillingTop;
-        }
       });
 
       const glaze = document.getElementById('glaze');
