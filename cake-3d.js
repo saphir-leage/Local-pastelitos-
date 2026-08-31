@@ -274,12 +274,11 @@
   function makePipingMotif(style,material){
     const group=new THREE.Group();
     if(style==='rosettes'){
-      for(let i=0;i<8;i++){const a=i/8*Math.PI*2,p=new THREE.Mesh(new THREE.SphereGeometry(.085,12,8),material);p.scale.set(1.25,.42,.72);p.position.set(Math.cos(a)*.095,.025,Math.sin(a)*.095);p.rotation.y=a;group.add(p);}
+      const swirl=new THREE.Mesh(new THREE.TorusKnotGeometry(.105,.032,48,7,2,7),material);swirl.rotation.x=Math.PI/2;swirl.scale.y=.48;swirl.position.y=.035;group.add(swirl);
       const center=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),material);center.scale.y=.6;center.position.y=.045;group.add(center);
     }else{
       const profile=[new THREE.Vector2(.018,0),new THREE.Vector2(.12,.018),new THREE.Vector2(.09,.06),new THREE.Vector2(.17,.105),new THREE.Vector2(.11,.15),new THREE.Vector2(.135,.2),new THREE.Vector2(.065,.255),new THREE.Vector2(0,.31)];
-      const tuff=new THREE.Mesh(new THREE.LatheGeometry(profile,18),material);group.add(tuff);
-      for(let i=0;i<8;i++){const ridge=new THREE.Mesh(new THREE.CylinderGeometry(.008,.014,.2,5),material);ridge.position.set(Math.cos(i/8*Math.PI*2)*.105,.11,Math.sin(i/8*Math.PI*2)*.105);ridge.rotation.z=.34;ridge.rotation.y=-i/8*Math.PI*2;group.add(ridge);}
+      const tuff=new THREE.Mesh(new THREE.LatheGeometry(profile,14),material);group.add(tuff);
     }
     return group;
   }
@@ -303,7 +302,7 @@
       decorationPoints(topLayout,count,radius,cutaway,hasBerries?-.48:-.72).forEach(p=>addPipingMotif(p,topY+.12,style,false,radius,material,target));
     }
     if(position==='side'||position==='both'){
-      const sideLayout=style==='borders'?'wreath':layout,count=style==='borders'?36:sideLayout==='portions'?pieces:sideLayout==='wreath'?14:sideLayout==='spiral'?13:7;
+      const sideLayout=style==='borders'?'wreath':layout,count=style==='borders'?28:sideLayout==='portions'?pieces:sideLayout==='wreath'?14:sideLayout==='spiral'?13:7;
       decorationPoints(sideLayout,count,radius,cutaway,hasBerries?-.44:-.68).forEach((p,i)=>{
         const sideY=topY-(style==='borders'?.34:sideLayout==='spiral'?.25+(i/count)*.72:.48);
         addPipingMotif(p,sideY,style,true,radius*1.035,material,target);
